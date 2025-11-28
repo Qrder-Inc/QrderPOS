@@ -11,6 +11,9 @@ export const MENU_ROUTES = {
     CREATE_MENU: '/manager/menu/menus/create',
     CATEGORIES: '/manager/menu/categories',
     ITEMS: '/manager/menu/items',
+    CREATE_ITEM: '/manager/menu/items/create',
+    MODIFIERS: '/manager/menu/modifiers',
+    CREATE_MODIFIER: '/manager/menu/modifiers/create',
 }
 
 export const DASHBOARD_ROUTES = {

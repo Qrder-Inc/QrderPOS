@@ -9,6 +9,7 @@ const MenuLinks = [
     { href: MENU_ROUTES.MENUS, label: "Menus" },
     { href: MENU_ROUTES.CATEGORIES, label: "Categorías" },
     { href: MENU_ROUTES.ITEMS, label: "Items" },
+    { href: MENU_ROUTES.MODIFIERS, label: "Modificadores" }
 ];
 
 export function MenuNavbar() {
