@@ -4,6 +4,9 @@ import { useState } from 'react';
 import { ShoppingCart, Plus, Minus, Trash2, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
+// import Types
+import { OrderType } from '@/types/order';
+
 interface MenuItem {
   id: number;
   name: string;
@@ -23,19 +26,10 @@ interface OrderSidebarProps {
   onRemoveItem: (index: number) => void;
   onClearOrder: () => void;
   onCheckout: () => void;
-  orderType: 'dine-in' | 'takeaway' | 'delivery';
-  onOrderTypeChange: (type: 'dine-in' | 'takeaway' | 'delivery') => void;
+  orderType: OrderType;
+  onOrderTypeChange: (type: OrderType) => void;
   orderCode: string;
 }
-
-// function generateOrderCode(): string {
-//   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-//   let code = '';
-//   for (let i = 0; i < 6; i++) {
-//     code += chars.charAt(Math.floor(Math.random() * chars.length));
-//   }
-//   return code;
-// }
 
 export default function OrderSidebar({
   orderItems,
@@ -56,7 +50,7 @@ export default function OrderSidebar({
     return sum + (price * item.quantity);
   }, 0);
 
-  const serviceFee = orderType === 'dine-in' ? subtotal * 0.10 : 0; // 10% service fee for dine-in
+  const serviceFee = orderType === OrderType.DINE_IN ? subtotal * 0.10 : 0; // 10% service fee for dine-in
   const tax = subtotal * 0.13; // 13% tax
   const total = subtotal + serviceFee + tax;
 
@@ -85,9 +79,9 @@ export default function OrderSidebar({
         {/* Order Type Selector */}
         <div className="flex gap-2 mb-4">
           <button
-            onClick={() => onOrderTypeChange('dine-in')}
+            onClick={() => onOrderTypeChange(OrderType.DINE_IN)}
             className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-              orderType === 'dine-in'
+              orderType === OrderType.DINE_IN
                 ? 'bg-[#ff8f2e] text-white'
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             }`}
@@ -95,9 +89,9 @@ export default function OrderSidebar({
             Dine In
           </button>
           <button
-            onClick={() => onOrderTypeChange('takeaway')}
+            onClick={() => onOrderTypeChange(OrderType.TAKEAWAY)}
             className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-              orderType === 'takeaway'
+              orderType === OrderType.TAKEAWAY
                 ? 'bg-[#ff8f2e] text-white'
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             }`}
@@ -105,9 +99,9 @@ export default function OrderSidebar({
             Takeaway
           </button>
           <button
-            onClick={() => onOrderTypeChange('delivery')}
+            onClick={() => onOrderTypeChange(OrderType.DELIVERY)}
             className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-              orderType === 'delivery'
+              orderType === OrderType.DELIVERY
                 ? 'bg-[#ff8f2e] text-white'
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             }`}
@@ -118,7 +112,7 @@ export default function OrderSidebar({
 
         {/* Conditional Inputs Based on Order Type */}
         <div className="space-y-3">
-          {orderType === 'dine-in' && (
+          {orderType === OrderType.DINE_IN && (
             <div>
               <label className="block text-xs font-medium text-gray-700 mb-2">Table Number</label>
               <select
@@ -126,7 +120,12 @@ export default function OrderSidebar({
                 onChange={(e) => setTableNumber(e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#ff8f2e]"
               >
-                <option value="">Select a table...</option>
+                <option value="">Select a table</option>
+
+                {/* 
+                Example table numbers 1-20
+                TODO: CHANGE IT IN THE FUTURE TO CONNECT TO THE DB
+                */}
                 {Array.from({ length: 20 }, (_, i) => i + 1).map((num) => (
                   <option key={num} value={num.toString()}>Table {num}</option>
                 ))}
@@ -134,12 +133,12 @@ export default function OrderSidebar({
             </div>
           )}
 
-          {orderType === 'takeaway' && (
+          {orderType === OrderType.TAKEAWAY && (
             <div>
               <label className="block text-xs font-medium text-gray-700 mb-2">Customer Name</label>
               <input
                 type="text"
-                placeholder="Enter customer name..."
+                placeholder="Enter customer name"
                 value={customerName}
                 onChange={(e) => setCustomerName(e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#ff8f2e]"
@@ -147,7 +146,7 @@ export default function OrderSidebar({
             </div>
           )}
 
-          {orderType === 'delivery' && (
+          {orderType === OrderType.DELIVERY && (
             <>
               <div>
                 <label className="block text-xs font-medium text-gray-700 mb-2">Customer Name</label>
@@ -282,7 +281,7 @@ export default function OrderSidebar({
               <span className="text-gray-600">Subtotal</span>
               <span className="font-medium">${subtotal.toFixed(2)}</span>
             </div>
-            {orderType === 'dine-in' && (
+            {orderType === OrderType.DINE_IN && (
               <div className="flex justify-between items-center text-sm">
                 <span className="text-gray-600">Service (10%)</span>
                 <span className="font-medium">${serviceFee.toFixed(2)}</span>

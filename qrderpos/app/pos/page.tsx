@@ -1,12 +1,14 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import Image from "next/image";
-import NavSideBar from "./leftSidebar";
-import OrderSidebar from "./orderSidebar";
-import ModifierModal from "./modifierModal";
-import CheckoutModal from "./checkoutModal";
+// Import page components
+import ProductCard from "./components/productCard";
+import CheckoutModal from "./components/checkoutModal";
+import NavSideBar from "./components/leftSidebar";
+import OrderSidebar from "./components/orderSidebar";
+import ModifierModal from "./components/modifierModal";
 
+// Import external components and icons
+import { Search, Wifi, ChevronDown } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import {
     DropdownMenu,
@@ -14,10 +16,16 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Search, Wifi, ChevronDown } from "lucide-react";
+
+// Other imports
+
+import { useState, useRef, useEffect } from "react";
+import Image from "next/image";
+import { OrderType } from "@/types/order";
+
 
 const POSPageInfo = {
-    restaurantName: "Restaurant Name",
+    restaurantName: "ACME Restaurant",
     restaurantLogo: "/logo.png"
 }
 
@@ -105,8 +113,8 @@ export default function POSPage() {
     const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null);
     const [selectedModifiers, setSelectedModifiers] = useState<Record<number, number>>({});
     const [orderNotes, setOrderNotes] = useState<string>('');
-    const [orderType, setOrderType] = useState<'dine-in' | 'takeaway' | 'delivery'>('dine-in');
-    const [orderCode] = useState<string>('ORD' + Math.random().toString(36).substring(2, 8).toUpperCase());
+    const [orderType, setOrderType] = useState<OrderType>(OrderType.DINE_IN);
+    const [orderCode] = useState<string>('ORD');
     const sidebarRef = useRef<HTMLDivElement>(null);
     const clickTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -336,12 +344,11 @@ export default function POSPage() {
                                 onClick={() => handleItemClick(product)}
                                 className="bg-white rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow text-left"
                             >
-                                <div className="aspect-square bg-gray-200 rounded-md mb-3 flex items-center justify-center">
-                                    <span className="text-4xl">🍽️</span>
-                                </div>
-                                <h3 className="font-semibold text-sm mb-1">{product.name}</h3>
-                                <p className="text-xs text-gray-500 mb-2">{product.category}</p>
-                                <p className="text-lg font-bold text-[#ff8f2e]">${product.price.toFixed(2)}</p>
+                                <ProductCard
+                                    title={product.name}
+                                    category={product.category}
+                                    price={product.price}
+                                />
                             </button>
                         ))}
                     </div>
@@ -397,7 +404,7 @@ export default function POSPage() {
                         const price = item.customPrice ?? item.price;
                         return sum + (price * item.quantity);
                     }, 0);
-                    const serviceFee = orderType === 'dine-in' ? subtotal * 0.10 : 0;
+                    const serviceFee = orderType === OrderType.DINE_IN ? subtotal * 0.10 : 0;
                     const tax = subtotal * 0.13;
                     return subtotal + serviceFee + tax;
                 })()}
@@ -410,7 +417,7 @@ export default function POSPage() {
                         const price = item.customPrice ?? item.price;
                         return sum + (price * item.quantity);
                     }, 0);
-                    return orderType === 'dine-in' ? subtotal * 0.10 : 0;
+                    return orderType === OrderType.DINE_IN ? subtotal * 0.10 : 0;
                 })()}
                 tax={(() => {
                     const subtotal = orderItems.reduce((sum, item) => {
