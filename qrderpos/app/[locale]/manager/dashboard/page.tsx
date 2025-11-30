@@ -1,12 +1,17 @@
 import { Card } from "@/components/ui/card"
 import { BarChart3, DollarSign, Package, Users } from "lucide-react"
+import { useTranslations } from "next-intl"
+
 
 export default function Dashboard() {
+  const t = useTranslations('dashboard');
+
+
   return (
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+        <h1 className="text-3xl font-bold tracking-tight">{t('title')}</h1>
         <p className="text-muted-foreground">
           Bienvenido a tu panel de control de QRDER
         </p>
