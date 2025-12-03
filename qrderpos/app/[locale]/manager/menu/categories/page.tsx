@@ -3,9 +3,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
     DropdownMenu,
@@ -30,17 +27,6 @@ const mockCategories = [
     
 ];
 
-// Mock data for menus
-const mockMenus = [
-    { id: 1, name: "Menú Principal" },
-    { id: 2, name: "Menú Ejecutivo" },
-    { id: 3, name: "Menú Vegetariano" },
-    { id: 4, name: "Menú de Temporada" },
-    // { id: 5, name: "Menú Principal" },
-    // { id: 6, name: "Menú Ejecutivo" },
-    // { id: 7, name: "Menú Vegetariano" },
-    // { id: 8, name: "Menú de Temporada" },
-];
 
 export default function MenuCategoriesPage() {
     const [searchQuery, setSearchQuery] = useState("");

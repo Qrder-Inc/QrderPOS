@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -258,7 +259,7 @@ export default function CreateMenuItemPage() {
                                 </div>
                             ) : (
                                 <div className="relative w-60 h-60 border rounded-lg overflow-hidden">
-                                    <img
+                                    <Image
                                         src={photoPreview}
                                         alt="Preview"
                                         className="w-full h-full object-cover"

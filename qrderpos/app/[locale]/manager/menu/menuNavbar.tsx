@@ -3,17 +3,20 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation"
 import { MENU_ROUTES } from "@/config/routes";
-
-const MenuLinks = [
-    { href: MENU_ROUTES.MENU_HOME, label: "General" },
-    { href: MENU_ROUTES.MENUS, label: "Menus" },
-    { href: MENU_ROUTES.CATEGORIES, label: "Categorías" },
-    { href: MENU_ROUTES.ITEMS, label: "Items" },
-    { href: MENU_ROUTES.MODIFIERS, label: "Modificadores" }
-];
+import { useTranslations } from "use-intl";
 
 export function MenuNavbar() {
-    const pathname = usePathname();
+    const t = useTranslations('menu');
+    // Get pathname and Remove locale prefix from pathname
+    const pathname = usePathname().replace(/^\/[a-z]{2}(\/|$)/, '/');
+
+    const MenuLinks = [
+    { href: MENU_ROUTES.MENU_HOME, label: t('generalTab') },
+    { href: MENU_ROUTES.MENUS, label: t('menusTab') },
+    { href: MENU_ROUTES.CATEGORIES, label: t('categoriesTab') },
+    { href: MENU_ROUTES.ITEMS, label: t('itemsTab') },
+    { href: MENU_ROUTES.MODIFIERS, label: t('modifiersTab') }
+    ];
 
     return (
         <>

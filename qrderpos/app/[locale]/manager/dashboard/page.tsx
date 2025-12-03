@@ -13,7 +13,7 @@ export default function Dashboard() {
       <div>
         <h1 className="text-3xl font-bold tracking-tight">{t('title')}</h1>
         <p className="text-muted-foreground">
-          Bienvenido a tu panel de control de QRDER
+          {t('welcome')}
         </p>
       </div>
 
@@ -22,7 +22,7 @@ export default function Dashboard() {
         <Card className="p-6">
           <div className="flex items-center space-x-2">
             <DollarSign className="h-4 w-4 text-muted-foreground" />
-            <h3 className="text-sm font-medium">Ventas Totales</h3>
+            <h3 className="text-sm font-medium">{t('monthlySales')}</h3>
           </div>
           <div className="mt-2">
             <p className="text-2xl font-bold">$12,345</p>

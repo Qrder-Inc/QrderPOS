@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ChevronDown, ChevronRight, Clock } from "lucide-react";
+import { useTranslations } from "use-intl";
 
 // Mock data
 const mockMenus = [
@@ -88,6 +89,7 @@ const mockMenus = [
 ];
 
 export default function MenuPage() {
+    const t = useTranslations('menu');
     const [expandedMenus, setExpandedMenus] = useState<number[]>([]);
     const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
 
@@ -111,9 +113,9 @@ export default function MenuPage() {
         <div className="space-y-6">
             {/* Header */}
             <div>
-                <h1 className="text-3xl font-bold tracking-tight">Vista General de tus Menús</h1>
+                <h1 className="text-3xl font-bold tracking-tight">{t('title')}</h1>
                 <p className="text-muted-foreground">
-                    Gestiona los elementos de tu menú aquí.
+                    {t('description')}
                 </p>
             </div>
 
@@ -147,10 +149,10 @@ export default function MenuPage() {
                                     </div>
                                     <div className="flex items-center gap-2">
                                         <Badge variant="secondary">
-                                            {menu.categories.length} {menu.categories.length === 1 ? 'categoría' : 'categorías'}
+                                            {menu.categories.length} {menu.categories.length === 1 ? t('category') : t('categories')}
                                         </Badge>
                                         <Badge variant="outline">
-                                            {totalItems} {totalItems === 1 ? 'item' : 'items'}
+                                            {totalItems} {totalItems === 1 ? t('item') : t('items')}
                                         </Badge>
                                     </div>
                                 </div>

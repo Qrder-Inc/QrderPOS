@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from 'react';
-import { ShoppingCart, Plus, Minus, Trash2, X } from 'lucide-react';
+import { ShoppingCart, Plus, Minus, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 // import Types

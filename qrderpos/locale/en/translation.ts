@@ -1,4 +1,4 @@
-
+import { create } from "domain";
 
 export default {
     common : {
@@ -24,15 +24,23 @@ export default {
         reports: "Reports"
     },
     menu : {
-        title: "Menu Management",
+        title: "General Overview of Your Menus",
+        description: "Manage your menu categories and items",
         categories: "Categories",
         items: "Items",
+        category: "Category",
+        item: "Item",
         menus: "Menus",
         modifiers: "Modifiers",
         createCategory: "Create Category",
         createItem: "Create Item",
         createMenu: "Create Menu",
-        createModifier: "Create Modifier"
+        createModifier: "Create Modifier",
+        generalTab: "General",
+        categoriesTab: "Categories",
+        itemsTab: "Items",
+        menusTab: "Menus",
+        modifiersTab: "Modifiers"
     },
     pos : {
         title: "Point of Sale",
@@ -46,12 +54,32 @@ export default {
         placeOrder: "Place Order"
     },
     dashboard : {
+        welcome: "Welcome to your QRDER dashboard",
         title: "Dashboard",
         overview: "Overview",
-        todaySales: "Today's Sales",
+        monthlySales: "Monthly Sales",
         totalOrders: "Total Orders",
         averageOrderValue: "Average Order Value",
         topSellingItems: "Top Selling Items",
         recentOrders: "Recent Orders"
+    },
+    createMenu : {
+        title: "Create New Menu",
+        description: "Set up a new menu for your restaurant",
+        namePlaceholder: "Menu Name",
+        visibility: "Visibility",
+        visibilityDescription: "Show or hide the menu from customers",
+        availabilityHours: "Availability Hours",
+        addAvailabilityHours: "Add Availability Hours",
+        addAvailabilityHoursBtn: "Add Hours",
+    },
+    days: {
+        mon: "Mon",
+        tue: "Tue",
+        wed: "Wed",
+        thu: "Thu",
+        fri: "Fri",
+        sat: "Sat",
+        sun: "Sun"
     }
 }
