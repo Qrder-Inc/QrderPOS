@@ -2,17 +2,38 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 // import { useAuth } from "@/contexts/AuthProvider";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "@/i18n/navigation";
+import { useParams } from "next/navigation";
 import Image from "next/image";
 import { PUBLIC_ROUTES } from "@/config/routes";
+import { Languages } from "lucide-react";
+
+const locales = [
+  { code: 'en', name: 'English', flag: '🇺🇸' },
+  { code: 'es', name: 'Español', flag: '🇪🇸' },
+  { code: 'zh', name: '中文', flag: '🇨🇳' },
+];
 
 export function Navbar() {
     const router = useRouter();
+    const pathname = usePathname();
+    const params = useParams();
+    const currentLocale = params.locale as string;
 
     const handleSignOut = async () => {
     router.push(PUBLIC_ROUTES.LOGIN);
     }
+
+    const handleLocaleChange = (newLocale: string) => {
+        router.replace(pathname, { locale: newLocale });
+    };
 
     const user = null;
     const loading = false;
@@ -38,6 +59,28 @@ export function Navbar() {
                 </div>
             ) : (
                 <>
+                {/* Language Selector */}
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="sm" className="gap-2">
+                        <Languages className="h-4 w-4" />
+                        {locales.find(l => l.code === currentLocale)?.flag}
+                    </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                    {locales.map((locale) => (
+                        <DropdownMenuItem
+                        key={locale.code}
+                        onClick={() => handleLocaleChange(locale.code)}
+                        className={currentLocale === locale.code ? "bg-accent" : ""}
+                        >
+                        <span className="mr-2">{locale.flag}</span>
+                        {locale.name}
+                        </DropdownMenuItem>
+                    ))}
+                    </DropdownMenuContent>
+                </DropdownMenu>
+
                 {!user && (
                     <Link href={PUBLIC_ROUTES.REGISTER} className="text-sm font-medium text-muted-foreground hover:text-foreground">
                     Formar Parte

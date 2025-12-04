@@ -3,20 +3,22 @@ import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
 import Link from "next/link"
 import { MENU_ROUTES } from "@/config/routes"
+import { useTranslations } from "next-intl"
 
 export default function MenusPage() {
+    const t = useTranslations("menu")
     return (
         <div className="space-y-6">
         {/* Header */}
         <div className="flex justify-between items-center">
             <div>
-                <h1 className="text-3xl font-bold tracking-tight">Menús</h1>
+                <h1 className="text-3xl font-bold tracking-tight">{t("title")}</h1>
                 <p className="text-muted-foreground">
-                Gestiona los menús de tu restaurante aquí.
+                {t("description")}
                 </p>
             </div>
             <Link href={MENU_ROUTES.CREATE_MENU}>
-                <Button variant="black"><Plus className="mr-2 h-4 w-4" />Crear menú</Button>
+                <Button variant="black"><Plus className="mr-2 h-4 w-4" />{t("createMenu")}</Button>
             </Link>
         </div>
         {/* Content */}

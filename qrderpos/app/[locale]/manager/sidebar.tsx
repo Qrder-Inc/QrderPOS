@@ -49,6 +49,8 @@ const navigation = [
 
 export function Sidebar() {
   const pathname = usePathname()
+  // Remove locale prefix from pathname (e.g., /en/manager/dashboard -> /manager/dashboard)
+  const pathnameWithoutLocale = pathname.replace(/^\/[a-z]{2}(\/|$)/, '/')
 
   return (
     <div className="flex h-full w-64 flex-col bg-card border-r">
@@ -57,7 +59,7 @@ export function Sidebar() {
       <nav className="flex-1 space-y-1 p-4">
         {navigation.map((item) => {
           const Icon = item.icon
-          const isActive = pathname.startsWith(item.href)
+          const isActive = pathnameWithoutLocale.startsWith(item.href)
           
           return (
             <Link key={item.name} href={item.href}>

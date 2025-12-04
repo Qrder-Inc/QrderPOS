@@ -1,4 +1,5 @@
 import { Sidebar } from "./sidebar"
+import { Navbar } from "@/components/navbar"  
 
 export default function DashboardLayout({
   children,
@@ -6,6 +7,8 @@ export default function DashboardLayout({
   children: React.ReactNode
 }) {
   return (
+    <>
+    <Navbar/>
     <div className="flex h-screen bg-background">
       <Sidebar />
       <main className="flex-1 overflow-y-auto">
@@ -14,5 +17,6 @@ export default function DashboardLayout({
         </div>
       </main>
     </div>
+    </>
   )
 }

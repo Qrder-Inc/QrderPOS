@@ -6,8 +6,14 @@ import { Switch } from "@/components/ui/switch"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { Card } from "@/components/ui/card"
 import { X } from "lucide-react"
+import { useTranslations } from "next-intl"
+    
 
 export default function CreateMenuPage() {
+    const t = useTranslations("createMenu");
+    const days = useTranslations("days");
+    const common = useTranslations("common");
+    
     return (
         <>
         <div className="flex items-center justify-between">
@@ -16,10 +22,10 @@ export default function CreateMenuPage() {
             </Link>
             <div className="flex">
                 <button className="rounded bg-primary px-4 py-2 text-white hover:bg-primary/90">
-                    Guardar
+                    {common("save")}
                 </button>
                 <button className="ml-2 rounded border border-border bg-background px-4 py-2 text-foreground hover:bg-accent">
-                    Eliminar
+                    {common("delete")}
                 </button>
 
             </div>
@@ -29,16 +35,16 @@ export default function CreateMenuPage() {
             <section>
 
             <h1 className="text-3xl font-bold tracking-tight">
-                Gestionar Menú
+                {t("title")}
             </h1>
             <Input
-                placeholder="Nombre del Menú"
+                placeholder={t("namePlaceholder")}
                 className="mt-4 mb-8 w-md border-0 border-b-2 border-primary rounded-none"
                 />
-            <h2 className="text-2xl">Visibilidad</h2>
+            <h2 className="text-2xl">{t("visibility")}</h2>
             <div className="flex items-center gap-5">
                 <p className="text-sm text-muted-foreground">
-                    Mostrar u ocultar el menú a los clientes
+                    {t("visibilityDescription")}
                 </p>
                 <Switch className="" />
             </div>
@@ -47,26 +53,28 @@ export default function CreateMenuPage() {
             {/* ========= Horarios de Disponibilidad ========= */}
             <section>
             <div className="mt-8 flex items-center justify-between">
-                <h2 className="text-2xl">Horarios de Disponibilidad</h2>
+                <h2 className="text-2xl">{
+                    t("availabilityHours")}
+                </h2>
                 <button className="rounded bg-primary px-4 py-2 text-white hover:bg-primary/90">
-                    Añadir Horario
+                    {t("addAvailabilityHoursBtn")}
                 </button>
             </div>
             <p className="text-sm text-muted-foreground">
-                Define los horarios en los que este menú estará disponible para los clientes.
+                {t("addAvailabilityHours")}
             </p>
             <div className="mt-4 space-y-4">
                 {/* Ejemplo de horario */}
                 <Card className="p-4 flex justify-between items-start relative">
                     <div>
                         <ToggleGroup type="multiple" className="flex space-x-2">
-                            <ToggleGroupItem value="mon" className="px-5 py-1 rounded bg-accent text-foreground data-[state=on]:bg-primary data-[state=on]:text-white">Lun</ToggleGroupItem>
-                            <ToggleGroupItem value="tue" className="px-5 py-1 rounded bg-accent text-foreground data-[state=on]:bg-primary data-[state=on]:text-white">Mar</ToggleGroupItem>
-                            <ToggleGroupItem value="wed" className="px-5 py-1 rounded bg-accent text-foreground data-[state=on]:bg-primary data-[state=on]:text-white">Mié</ToggleGroupItem>
-                            <ToggleGroupItem value="thu" className="px-5 py-1 rounded bg-accent text-foreground data-[state=on]:bg-primary data-[state=on]:text-white">Jue</ToggleGroupItem>
-                            <ToggleGroupItem value="fri" className="px-5 py-1 rounded bg-accent text-foreground data-[state=on]:bg-primary data-[state=on]:text-white">Vie</ToggleGroupItem>
-                            <ToggleGroupItem value="sat" className="px-5 py-1 rounded bg-accent text-foreground data-[state=on]:bg-primary data-[state=on]:text-white">Sáb</ToggleGroupItem>
-                            <ToggleGroupItem value="sun" className="px-5 py-1 rounded bg-accent text-foreground data-[state=on]:bg-primary data-[state=on]:text-white">Dom</ToggleGroupItem>
+                            <ToggleGroupItem value="mon" className="px-5 py-1 rounded bg-accent text-foreground data-[state=on]:bg-primary data-[state=on]:text-white">{days("mon")}</ToggleGroupItem>
+                            <ToggleGroupItem value="tue" className="px-5 py-1 rounded bg-accent text-foreground data-[state=on]:bg-primary data-[state=on]:text-white">{days("tue")}</ToggleGroupItem>
+                            <ToggleGroupItem value="wed" className="px-5 py-1 rounded bg-accent text-foreground data-[state=on]:bg-primary data-[state=on]:text-white">{days("wed")}</ToggleGroupItem>
+                            <ToggleGroupItem value="thu" className="px-5 py-1 rounded bg-accent text-foreground data-[state=on]:bg-primary data-[state=on]:text-white">{days("thu")}</ToggleGroupItem>
+                            <ToggleGroupItem value="fri" className="px-5 py-1 rounded bg-accent text-foreground data-[state=on]:bg-primary data-[state=on]:text-white">{days("fri")}</ToggleGroupItem>
+                            <ToggleGroupItem value="sat" className="px-5 py-1 rounded bg-accent text-foreground data-[state=on]:bg-primary data-[state=on]:text-white">{days("sat")}</ToggleGroupItem>
+                            <ToggleGroupItem value="sun" className="px-5 py-1 rounded bg-accent text-foreground data-[state=on]:bg-primary data-[state=on]:text-white">{days("sun")}</ToggleGroupItem>
                         </ToggleGroup>
                         <div className="space-x-4 mt-4">
                             <span>Hora de Inicio</span>

@@ -1,0 +1,442 @@
+# Internationalization (i18n) Documentation
+
+## Overview
+This project uses `next-intl` for internationalization with support for English (en), Spanish (es), and Chinese (zh).
+
+## Folder Structure
+```
+qrderpos/
+├── i18n/
+│   ├── navigation.ts    # Internationalized navigation utilities
+│   ├── request.ts       # Server-side i18n configuration
+│   └── routing.ts       # Routing configuration (locales, default locale)
+├── locale/
+│   ├── en/
+│   │   └── translation.ts
+│   ├── es/
+│   │   └── translation.ts
+│   └── zh/
+│       └── translation.ts
+├── middleware.ts        # Handles locale detection and routing
+└── app/
+    ├── layout.tsx       # Root layout with html/body tags
+    └── [locale]/
+        ├── layout.tsx   # Locale-specific layout with NextIntlClientProvider
+        └── page.tsx     # Your pages here
+```
+
+---
+
+## Configuration Files
+
+### 1. i18n/routing.ts
+Defines available locales and routing behavior.
+
+```typescript
+import { defineRouting } from "next-intl/routing";
+
+export const routing = defineRouting({
+    locales: ["en", "es", "zh"],      // Available languages
+    defaultLocale: "es",               // Default language
+    localePrefix: 'as-needed'          // Only add prefix for non-default locales
+});
+```
+
+**Key Points:**
+- `locales`: Array of supported language codes
+- `defaultLocale`: Fallback language when no locale is specified
+- `localePrefix: 'as-needed'`: 
+  - Default locale (es): `/` or `/dashboard`
+  - Other locales: `/en` or `/en/dashboard`, `/zh/dashboard`
+
+---
+
+### 2. i18n/request.ts
+Server-side configuration for loading translation messages.
+
+```typescript
+import { getRequestConfig } from 'next-intl/server';
+import { hasLocale } from 'next-intl';
+import { routing } from './routing';
+
+export default getRequestConfig(async ({ requestLocale }) => {
+  const requested = await requestLocale;
+  const locale = hasLocale(routing.locales, requested)
+    ? requested
+    : routing.defaultLocale;
+
+  const translation = await import(`../locale/${locale}/translation`);
+
+  return {
+    locale,
+    messages: translation.default
+  };
+});
+```
+
+**Key Points:**
+- Validates requested locale against available locales
+- Falls back to `defaultLocale` if invalid
+- Dynamically imports the correct translation file
+- Returns locale and messages for the application
+
+---
+
+### 3. i18n/navigation.ts
+Provides internationalized navigation utilities.
+
+```typescript
+import { createNavigation } from "next-intl/navigation";
+import { routing } from "./routing";
+
+export const {Link, redirect, usePathname, useRouter, getPathname} = createNavigation(routing);
+```
+
+**Exported Utilities:**
+- `Link`: Internationalized Link component (use instead of next/link)
+- `redirect`: Server-side redirect with locale support
+- `usePathname`: Get current pathname without locale prefix
+- `useRouter`: Router with locale-aware navigation
+- `getPathname`: Server-side pathname helper
+
+---
+
+## Translation Files
+
+### Structure (locale/[lang]/translation.ts)
+All translations are organized in nested objects:
+
+```typescript
+export default {
+    common: {
+        welcome: "Welcome to QrderPOS",
+        language: "Language",
+        save: "Save",
+        cancel: "Cancel",
+        // ... more common translations
+    },
+    nav: {
+        home: "Home",
+        dashboard: "Dashboard",
+        menu: "Menu",
+        // ... more navigation items
+    },
+    dashboard: {
+        title: "Dashboard",
+        overview: "Overview",
+        todaySales: "Today's Sales",
+        // ... more dashboard translations
+    },
+    // Add more namespaces as needed
+}
+```
+
+**Best Practices:**
+- Group related translations together (common, nav, dashboard, etc.)
+- Use consistent keys across all language files
+- Keep the same structure in en/translation.ts, es/translation.ts, and zh/translation.ts
+
+---
+
+## Using Translations in Components
+
+### Client Components
+
+```typescript
+'use client';
+import { useTranslations } from 'next-intl';
+
+export default function MyComponent() {
+  // Load a specific namespace
+  const t = useTranslations('dashboard');
+  
+  return (
+    <div>
+      <h1>{t('title')}</h1>              {/* Outputs: "Dashboard" */}
+      <p>{t('todaySales')}</p>           {/* Outputs: "Today's Sales" */}
+    </div>
+  );
+}
+```
+
+**Multiple Namespaces:**
+```typescript
+'use client';
+import { useTranslations } from 'next-intl';
+
+export default function MyComponent() {
+  const tCommon = useTranslations('common');
+  const tDashboard = useTranslations('dashboard');
+  
+  return (
+    <div>
+      <h1>{tDashboard('title')}</h1>
+      <button>{tCommon('save')}</button>
+      <button>{tCommon('cancel')}</button>
+    </div>
+  );
+}
+```
+
+---
+
+### Server Components
+
+```typescript
+import { getTranslations } from 'next-intl/server';
+
+export default async function ServerComponent() {
+  const t = await getTranslations('dashboard');
+  
+  return (
+    <div>
+      <h1>{t('title')}</h1>
+      <p>{t('overview')}</p>
+    </div>
+  );
+}
+```
+
+**Important:** Use `getTranslations` (async) for server components, not `useTranslations`.
+
+---
+
+## Navigation with i18n
+
+### Using the Internationalized Link Component
+
+```typescript
+'use client';
+import { Link } from '@/i18n/navigation';  // NOT from 'next/link'
+
+export default function Navigation() {
+  return (
+    <nav>
+      <Link href="/">Home</Link>
+      <Link href="/dashboard">Dashboard</Link>
+      <Link href="/menu">Menu</Link>
+    </nav>
+  );
+}
+```
+
+**What it does:**
+- Automatically adds the locale prefix
+- If user is on `/en/dashboard` and clicks a link, stays in English
+- Preserves the current locale across navigation
+
+---
+
+### Programmatic Navigation
+
+```typescript
+'use client';
+import { useRouter } from '@/i18n/navigation';  // NOT from 'next/navigation'
+
+export default function MyComponent() {
+  const router = useRouter();
+  
+  const handleClick = () => {
+    // Navigate while preserving locale
+    router.push('/dashboard');
+  };
+  
+  return <button onClick={handleClick}>Go to Dashboard</button>;
+}
+```
+
+---
+
+### Changing Language Programmatically
+
+```typescript
+'use client';
+import { useRouter, usePathname } from '@/i18n/navigation';
+import { useParams } from 'next/navigation';
+
+export default function LanguageSwitcher() {
+  const router = useRouter();
+  const pathname = usePathname();
+  const params = useParams();
+  const currentLocale = params.locale as string;
+
+  const changeLanguage = (newLocale: string) => {
+    // Stay on same page, but change locale
+    router.replace(pathname, { locale: newLocale });
+  };
+
+  return (
+    <div>
+      <button onClick={() => changeLanguage('en')}>English</button>
+      <button onClick={() => changeLanguage('es')}>Español</button>
+      <button onClick={() => changeLanguage('zh')}>中文</button>
+    </div>
+  );
+}
+```
+
+---
+
+## Common Use Cases
+
+### 1. Dynamic Values in Translations
+
+**translation.ts:**
+```typescript
+export default {
+  greeting: "Hello, {name}!",
+  itemCount: "You have {count} items"
+}
+```
+
+**Usage:**
+```typescript
+const t = useTranslations('common');
+
+<p>{t('greeting', { name: 'John' })}</p>        {/* Hello, John! */}
+<p>{t('itemCount', { count: 5 })}</p>           {/* You have 5 items */}
+```
+
+---
+
+### 2. Pluralization
+
+**translation.ts:**
+```typescript
+export default {
+  items: '{count, plural, =0 {No items} =1 {One item} other {# items}}'
+}
+```
+
+**Usage:**
+```typescript
+const t = useTranslations('common');
+
+<p>{t('items', { count: 0 })}</p>   {/* No items */}
+<p>{t('items', { count: 1 })}</p>   {/* One item */}
+<p>{t('items', { count: 5 })}</p>   {/* 5 items */}
+```
+
+---
+
+### 3. Rich Text / HTML in Translations
+
+```typescript
+const t = useTranslations('common');
+
+<p>{t.rich('terms', {
+  link: (chunks) => <a href="/terms">{chunks}</a>
+})}</p>
+```
+
+---
+
+## Middleware
+
+The `middleware.ts` file at the root handles:
+- Automatic locale detection from browser settings
+- URL rewriting to include locale prefix
+- Redirects for invalid locales
+
+```typescript
+import createMiddleware from "next-intl/middleware";
+import { routing } from "./i18n/routing";
+
+export default createMiddleware(routing);
+
+export const config = {
+  matcher: [
+    "/((?!api|trpc|_next|_vercel|_next/static|_next/image|.*\\..*).*)",
+  ],
+};
+```
+
+---
+
+## URL Structure Examples
+
+With `defaultLocale: "es"` and `localePrefix: 'as-needed'`:
+
+| Page | Spanish (default) | English | Chinese |
+|------|------------------|---------|---------|
+| Home | `/` | `/en` | `/zh` |
+| Dashboard | `/manager/dashboard` | `/en/manager/dashboard` | `/zh/manager/dashboard` |
+| Menu | `/manager/menu` | `/en/manager/menu` | `/zh/manager/menu` |
+
+---
+
+## Best Practices
+
+1. **Always use the i18n navigation utilities:**
+   - `import { Link, useRouter } from '@/i18n/navigation'` (not from next/link or next/navigation)
+
+2. **Keep translation keys consistent:**
+   - Same keys must exist in all language files (en, es, zh)
+
+3. **Organize translations logically:**
+   - Group by feature/page: common, nav, dashboard, menu, pos, etc.
+
+4. **Use TypeScript for type safety:**
+   - Consider creating types for your translation keys
+
+5. **Test all languages:**
+   - Ensure all translation keys exist in all locale files
+
+6. **Server vs Client:**
+   - Client: `useTranslations('namespace')`
+   - Server: `await getTranslations('namespace')`
+
+---
+
+## Adding a New Language
+
+1. **Update routing.ts:**
+```typescript
+export const routing = defineRouting({
+    locales: ["en", "es", "zh", "fr"],  // Add 'fr'
+    defaultLocale: "es",
+});
+```
+
+2. **Create translation file:**
+   - Create `locale/fr/translation.ts` with the same structure
+
+3. **Update language selector:**
+   - Add French option to your language switcher component
+
+---
+
+## Troubleshooting
+
+**Error: "Could not resolve `key` in messages"**
+- Make sure the translation key exists in the active locale's translation.ts file
+- Check for typos in the key name
+
+**Error: "INSUFFICIENT_PATH"**
+- You're trying to access a nested object, use dot notation
+- Example: Use `t('title')` not `t('dashboard')` when namespace is already 'dashboard'
+
+**Links not preserving locale:**
+- Make sure you're using `import { Link } from '@/i18n/navigation'`
+- NOT `import Link from 'next/link'`
+
+---
+
+## Quick Reference
+
+```typescript
+// CLIENT COMPONENTS
+import { useTranslations, useLocale } from 'next-intl';
+import { Link, useRouter, usePathname } from '@/i18n/navigation';
+
+const t = useTranslations('namespace');
+const currentLocale = useLocale();
+const router = useRouter();
+const pathname = usePathname();
+
+// SERVER COMPONENTS
+import { getTranslations, getLocale } from 'next-intl/server';
+
+const t = await getTranslations('namespace');
+const currentLocale = await getLocale();
+```
