@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { X, Printer } from "lucide-react";
 
+import { useTranslations } from "next-intl";
+
 
 interface OrderItem {
   id: number;
@@ -46,6 +48,8 @@ export default function CheckoutModal({
   const [amountPaid, setAmountPaid] = useState<string>(total.toFixed(2));
   const [localTotal, setLocalTotal] = useState<number>(total);
 
+  const t = useTranslations("pos");
+
   useEffect(() => {
     // Keep amountPaid synced when total changes (e.g., item removed)
     setLocalTotal(total);
@@ -82,10 +86,10 @@ export default function CheckoutModal({
       <div className="print-receipt hidden print:block">
         <div className="text-center mb-4">
           <h1 className="print-title mb-1">{restaurantName}</h1>
-          <div className="print-small">Receipt</div>
+          <div className="print-small">Recibo</div>
           <div className="print-small">{new Date().toLocaleString()}</div>
-          <div className="mt-1 font-bold print-small">Order: {orderCode}</div>
-          <div className="print-small">Type: {orderType}</div>
+          <div className="mt-1 font-bold print-small">Orden: {orderCode}</div>
+          <div className="print-small">Consumo: {orderType}</div>
         </div>
 
         <div style={{ borderTop: "1px dashed #ddd", margin: "6px 0" }} />
@@ -94,8 +98,8 @@ export default function CheckoutModal({
           <thead>
             <tr className="print-small">
               <th style={{ textAlign: "left" }}>Item</th>
-              <th style={{ textAlign: "center" }}>Qty</th>
-              <th style={{ textAlign: "right" }}>Price</th>
+              <th style={{ textAlign: "center" }}>Cant</th>
+              <th style={{ textAlign: "right" }}>Precio</th>
               <th style={{ textAlign: "right" }}>Total</th>
             </tr>
           </thead>

@@ -6,6 +6,8 @@ import {
 } from '@/components/ui/tooltip';
 import {Settings, ShoppingBag, Plus} from 'lucide-react';
 
+import { useTranslations } from 'next-intl';
+
 interface NavItem {
   icon: React.ComponentType<{ className?: string }>;
   label: string;
@@ -14,10 +16,12 @@ interface NavItem {
 
 // Left Navbar Component
 export default function NavSideBar() {
+  const t = useTranslations('pos.navSidebar');
+
   const navItems: NavItem[] = [
-    { icon: Plus, label: 'New Order' },
-    { icon: ShoppingBag, label: 'Orders' },
-    { icon: Settings, label: 'Settings' }
+    { icon: Plus, label: t('newOrder') },
+    { icon: ShoppingBag, label: t('orders') },
+    { icon: Settings, label: t('settings') }
   ];
 
   return (

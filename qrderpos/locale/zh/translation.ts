@@ -1,3 +1,5 @@
+import { clear } from "console";
+
 export default {
     common : {
         welcome: "欢迎使用 QrderPOS",
@@ -46,10 +48,30 @@ export default {
         checkout: "结账",
         total: "总计",
         subtotal: "小计",
+        service: "服务费",
         tax: "税",
         discount: "折扣",
         addToOrder: "添加到订单",
-        placeOrder: "下单"
+        placeOrder: "下单",
+        searchItems: "搜索菜单项目...",
+        dineIn: "堂食",
+        takeAway: "外带",
+        delivery: "送货",
+        currentOrder: "当前订单",
+        emptyCart: "订单为空",
+        emptyCartDescription: "从菜单中添加项目以开始订单",
+        tableNumber: "桌号",
+        selectTable: "选择桌号",
+        inputCustomerName: "输入客户姓名",
+        customerNameLabel: "客户姓名",
+        customerPhoneLabel: "客户电话",
+        inputCustomerPhone: "输入客户电话",
+        clearAll: "清除全部",
+        navSidebar: {
+            newOrder: "新订单",
+            orders: "订单",
+            settings: "设置"
+        }
     },
     dashboard : {
         welcome: "欢迎来到您的 QRDER 仪表板",
@@ -59,7 +81,13 @@ export default {
         totalOrders: "总订单",
         averageOrderValue: "平均订单价值",
         topSellingItems: "热销商品",
-        recentOrders: "最近订单"
+        recentOrders: "最近订单",
+        sidebarOrders: "订单",
+        sidebarMenu: "菜单",
+        sidebarCustomers: "客户",
+        sidebarReports: "报告",
+        sidebarSettings: "设置",
+        sidebarHome: "仪表板"
     },
     createMenu : {
         title: "创建新菜单",
@@ -79,5 +107,15 @@ export default {
         fri: "周五",
         sat: "周六",
         sun: "周日"
+    },
+    settings: {
+        title: "设置",
+        description: "管理您的应用程序偏好设置",
+        language: "语言",
+        languageDescription: "选择您的首选应用程序语言",
+        languageLabel: "语言：",
+        general: "常规",
+        generalDescription: "其他应用程序设置",
+        comingSoon: "更多设置即将推出..."
     }
 }

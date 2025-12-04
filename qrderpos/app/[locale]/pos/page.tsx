@@ -22,6 +22,7 @@ import {
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { OrderType } from "@/types/order";
+import { useTranslations } from "next-intl";
 
 
 const POSPageInfo = {
@@ -117,6 +118,7 @@ export default function POSPage() {
     const [orderCode] = useState<string>('ORD');
     const sidebarRef = useRef<HTMLDivElement>(null);
     const clickTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+    const t = useTranslations('pos');
 
     const handleItemClick = (item: MenuItem) => {
         if (clickTimeoutRef.current) {
@@ -262,8 +264,8 @@ export default function POSPage() {
                         <div className="relative">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                             <Input 
-                                placeholder="Search menu items..." 
-                                className="w-full max-w-md pl-9" 
+                                placeholder={t('searchItems')}
+                                className="w-full max-w-md pl-10" 
                             />
                         </div>
                         {/* Internet Connection Icon */}

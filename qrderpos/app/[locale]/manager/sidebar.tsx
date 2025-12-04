@@ -13,44 +13,48 @@ import {
   Settings,
 } from "lucide-react"
 import { DASHBOARD_ROUTES } from "@/config/routes"
+import { useTranslations } from "next-intl"
 
-const navigation = [
+
+
+export function Sidebar() {
+  const t = useTranslations("dashboard")
+
+  const navigation = [
   {
-    name: "Dashboard",
+    name: t("sidebarHome"),
     href: DASHBOARD_ROUTES.DASHBOARD,
     icon: Home
   },
   {
-    name: "Órdenes",
+    name: t("sidebarOrders"),
     href: DASHBOARD_ROUTES.ORDERS,
     icon: ShoppingCart
   },
   {
-    name: "Menu",
+    name: t("sidebarMenu"),
     href: DASHBOARD_ROUTES.MENU,
     icon: BookOpen
   },
   {
-    name: "Clientes",
+    name: t("sidebarCustomers"),
     href: DASHBOARD_ROUTES.CUSTOMERS,
     icon: Users
   },
   {
-    name: "Reportes",
+    name: t("sidebarReports"),
     href: DASHBOARD_ROUTES.REPORTS,
     icon: BarChart3
   },
   {
-    name: "Configuración",
+    name: t("sidebarSettings"),
     href: DASHBOARD_ROUTES.SETTINGS,
     icon: Settings
   }
 ]
 
-export function Sidebar() {
-  const pathname = usePathname()
   // Remove locale prefix from pathname (e.g., /en/manager/dashboard -> /manager/dashboard)
-  const pathnameWithoutLocale = pathname.replace(/^\/[a-z]{2}(\/|$)/, '/')
+  const pathname = usePathname().replace(/^\/[a-z]{2}(\/|$)/, '/')
 
   return (
     <div className="flex h-full w-64 flex-col bg-card border-r">
@@ -59,7 +63,7 @@ export function Sidebar() {
       <nav className="flex-1 space-y-1 p-4">
         {navigation.map((item) => {
           const Icon = item.icon
-          const isActive = pathnameWithoutLocale.startsWith(item.href)
+          const isActive = pathname.startsWith(item.href)
           
           return (
             <Link key={item.name} href={item.href}>
