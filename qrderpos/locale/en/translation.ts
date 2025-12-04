@@ -1,5 +1,3 @@
-import { create } from "domain";
-
 export default {
     common : {
         welcome: "Welcome to QrderPOS",
@@ -49,9 +47,29 @@ export default {
         total: "Total",
         subtotal: "Subtotal",
         tax: "Tax",
+        service: "Service",
         discount: "Discount",
         addToOrder: "Add to Order",
-        placeOrder: "Place Order"
+        placeOrder: "Place Order",
+        searchItems: "Search menu items...",
+        dineIn: "Dine In",
+        takeAway: "Take Away",
+        delivery: "Delivery",
+        currentOrder: "Current Order",
+        emptyCart: "Cart is empty",
+        emptyCartDescription: "Add items from the menu to start your order",
+        tableNumber: "Table Number",
+        selectTable: "Select Table",
+        inputCustomerName: "Enter Customer Name",
+        customerNameLabel: "Customer Name",
+        customerPhoneLabel: "Customer Phone",
+        inputCustomerPhone: "Enter Customer Phone",
+        clearAll: "Clear All",
+        navSidebar: {
+            newOrder: "New Order",
+            orders: "Orders",
+            settings: "Settings"
+        }
     },
     dashboard : {
         welcome: "Welcome to your QRDER dashboard",
@@ -61,7 +79,13 @@ export default {
         totalOrders: "Total Orders",
         averageOrderValue: "Average Order Value",
         topSellingItems: "Top Selling Items",
-        recentOrders: "Recent Orders"
+        recentOrders: "Recent Orders",
+        sidebarOrders: "Orders",
+        sidebarMenu: "Menu",
+        sidebarCustomers: "Customers",
+        sidebarReports: "Reports",
+        sidebarSettings: "Settings",
+        sidebarHome: "Dashboard"
     },
     createMenu : {
         title: "Create New Menu",
@@ -81,5 +105,15 @@ export default {
         fri: "Fri",
         sat: "Sat",
         sun: "Sun"
+    },
+    settings: {
+        title: "Settings",
+        description: "Manage your application preferences",
+        language: "Language",
+        languageDescription: "Select your preferred language for the application",
+        languageLabel: "Language:",
+        general: "General",
+        generalDescription: "Other application settings",
+        comingSoon: "More settings coming soon..."
     }
 }

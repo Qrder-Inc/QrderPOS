@@ -4,6 +4,9 @@ import { useState } from 'react';
 import { ShoppingCart, Plus, Minus, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
+// import Translations
+import { useTranslations } from 'next-intl';
+
 // import Types
 import { OrderType } from '@/types/order';
 
@@ -41,6 +44,9 @@ export default function OrderSidebar({
   onOrderTypeChange,
   orderCode
 }: OrderSidebarProps) {
+
+  const t = useTranslations("pos");
+
   const [tableNumber, setTableNumber] = useState<string>('');
   const [customerName, setCustomerName] = useState<string>('');
   const [customerPhone, setCustomerPhone] = useState<string>('');
@@ -62,7 +68,7 @@ export default function OrderSidebar({
           <div className="flex items-center gap-3">
             <ShoppingCart className="w-5 h-5" />
             <div>
-              <h2 className="text-md font-semibold">Current Order</h2>
+              <h2 className="text-md font-semibold">{t("currentOrder")}</h2>
               <div className="text-lg font-mono font-semibold text-[#ff8f2e]">{orderCode}</div>
             </div>
           </div>
@@ -71,7 +77,7 @@ export default function OrderSidebar({
               onClick={onClearOrder}
               className="text-sm text-red-500 hover:text-red-600 transition-colors"
             >
-              Clear All
+              {t("clearAll")}
             </button>
           )}
         </div>
@@ -86,7 +92,7 @@ export default function OrderSidebar({
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             }`}
           >
-            Dine In
+            {t("dineIn")}
           </button>
           <button
             onClick={() => onOrderTypeChange(OrderType.TAKEAWAY)}
@@ -96,7 +102,7 @@ export default function OrderSidebar({
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             }`}
           >
-            Takeaway
+            {t("takeAway")}
           </button>
           <button
             onClick={() => onOrderTypeChange(OrderType.DELIVERY)}
@@ -106,7 +112,7 @@ export default function OrderSidebar({
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             }`}
           >
-            Delivery
+            {t("delivery")}
           </button>
         </div>
 
@@ -114,13 +120,13 @@ export default function OrderSidebar({
         <div className="space-y-3">
           {orderType === OrderType.DINE_IN && (
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-2">Table Number</label>
+              <label className="block text-xs font-medium text-gray-700 mb-2">{t("tableNumber")}</label>
               <select
                 value={tableNumber}
                 onChange={(e) => setTableNumber(e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#ff8f2e]"
               >
-                <option value="">Select a table</option>
+                <option value="">{t("selectTable")}</option>
 
                 {/* 
                 Example table numbers 1-20
@@ -135,10 +141,10 @@ export default function OrderSidebar({
 
           {orderType === OrderType.TAKEAWAY && (
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-2">Customer Name</label>
+              <label className="block text-xs font-medium text-gray-700 mb-2">{t("customerNameLabel")}</label>
               <input
                 type="text"
-                placeholder="Enter customer name"
+                placeholder={t("inputCustomerName")}
                 value={customerName}
                 onChange={(e) => setCustomerName(e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#ff8f2e]"
@@ -149,20 +155,20 @@ export default function OrderSidebar({
           {orderType === OrderType.DELIVERY && (
             <>
               <div>
-                <label className="block text-xs font-medium text-gray-700 mb-2">Customer Name</label>
+                <label className="block text-xs font-medium text-gray-700 mb-2">{t("customerNameLabel")}</label>
                 <input
                   type="text"
-                  placeholder="Enter customer name..."
+                  placeholder={t("inputCustomerName")}
                   value={customerName}
                   onChange={(e) => setCustomerName(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#ff8f2e]"
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-gray-700 mb-2">Phone Number</label>
+                <label className="block text-xs font-medium text-gray-700 mb-2">{t("customerPhoneLabel")}</label>
                 <input
                   type="tel"
-                  placeholder="Enter phone number..."
+                  placeholder={t("inputCustomerPhone")}
                   value={customerPhone}
                   onChange={(e) => setCustomerPhone(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#ff8f2e]"
@@ -178,8 +184,8 @@ export default function OrderSidebar({
         {orderItems.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-center">
             <ShoppingCart className="w-16 h-16 text-gray-300 mb-4" />
-            <p className="text-gray-500 text-sm">No items added yet</p>
-            <p className="text-gray-400 text-xs mt-1">Start adding items to create an order</p>
+            <p className="text-gray-500 text-sm">{t("emptyCart")}</p>
+            <p className="text-gray-400 text-xs mt-1">{t("emptyCartDescription")}</p>
           </div>
         ) : (
           <div className="space-y-3">
@@ -278,21 +284,21 @@ export default function OrderSidebar({
           {/* Totals */}
           <div className="space-y-2">
             <div className="flex justify-between items-center text-sm">
-              <span className="text-gray-600">Subtotal</span>
+              <span className="text-gray-600">{t("subtotal")}</span>
               <span className="font-medium">${subtotal.toFixed(2)}</span>
             </div>
             {orderType === OrderType.DINE_IN && (
               <div className="flex justify-between items-center text-sm">
-                <span className="text-gray-600">Service (10%)</span>
+                <span className="text-gray-600">{t("service")} (10%)</span>
                 <span className="font-medium">${serviceFee.toFixed(2)}</span>
               </div>
             )}
             <div className="flex justify-between items-center text-sm">
-              <span className="text-gray-600">Tax (13%)</span>
+              <span className="text-gray-600">{t("tax")} (13%)</span>
               <span className="font-medium">${tax.toFixed(2)}</span>
             </div>
             <div className="flex justify-between items-center text-lg font-semibold pt-2 border-t">
-              <span>Total</span>
+              <span>{t("total")}</span>
               <span>${total.toFixed(2)}</span>
             </div>
           </div>
@@ -303,13 +309,13 @@ export default function OrderSidebar({
               onClick={onCheckout}
               className="w-full bg-[#ff8f2e] hover:bg-[#e67e1a]"
             >
-              Checkout - ${total.toFixed(2)}
+              {t("checkout")} - ${total.toFixed(2)}
             </Button>
             <Button 
               variant="outline"
               className="w-full"
             >
-              Save Order
+              {t("placeOrder")}
             </Button>
           </div>
         </div>
