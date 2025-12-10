@@ -70,7 +70,8 @@ export default {
         navSidebar: {
             newOrder: "新订单",
             orders: "订单",
-            settings: "设置"
+            settings: "设置",
+            logout: "登出"
         }
     },
     dashboard : {
@@ -117,5 +118,16 @@ export default {
         general: "常规",
         generalDescription: "其他应用程序设置",
         comingSoon: "更多设置即将推出..."
+    },
+    login: {
+        title: "登录到您的账户",
+        emailLabel: "电子邮件地址",
+        passwordLabel: "密码",
+        loginButton: "登录",
+        forgotPassword: "忘记密码？",
+        incorrectCredentials: "请检查您的凭据并重试。",
+        loginSuccess: "登录成功！",
+        missingFields: "请输入您的电子邮件和密码。",
+        loginBtn: "登录"
     }
 }

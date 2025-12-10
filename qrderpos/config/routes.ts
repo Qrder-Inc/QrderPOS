@@ -1,8 +1,17 @@
+import { unauthorized } from "next/navigation";
+
 export const PUBLIC_ROUTES = {
     HOME: '/',
     LOGIN: '/login',
     REGISTER: '/register',
 }
+
+export const AUTH_ROUTES = {
+    MANAGER: '/manager',
+    AUTHORIZATION: '/authorization',
+    POS: '/pos',
+    UNAUTHORIZED: '/unauthorized',
+};
 
 // * Manager Routes Section ================================
 export const MENU_ROUTES = {

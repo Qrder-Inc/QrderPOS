@@ -1,17 +1,27 @@
 import createMiddleware from "next-intl/middleware";
 import { routing } from "./i18n/routing";
+import { type NextRequest } from 'next/server'
 
-import { NextRequest } from "next/server";
+// Supabase Middleware
+import { updateSession } from "./utils/supabase/middleware";
 
 // Create next-intl middleware instance
 const intlMiddleware = createMiddleware(routing);
 
 export async function proxy(request: NextRequest) {
-  // --- 1. Run next-intl first (handles locale redirects, etc.)
+  // --- 1. Run Supabase session update first
+  const supabaseResponse = await updateSession(request);
+  
+  // --- 2. If Supabase redirects (login required), return that
+  if (supabaseResponse.headers.get('location')) {
+    return supabaseResponse;
+  }
+  
+  // --- 3. Otherwise, run next-intl middleware
   const intlResponse = intlMiddleware(request);
-  if (intlResponse) return intlResponse;
-
-  // --- 2. Then update Supabase session (if applicable)
+  
+  // --- 4. Return intl response if it exists, otherwise supabase response
+  return intlResponse || supabaseResponse;
 }
 
 // --- Unified Proxy-Friendly Matcher ---

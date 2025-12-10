@@ -10,17 +10,34 @@ import { useTranslations } from 'next-intl';
 // import Types
 import { OrderType } from '@/types/order';
 
+interface ModifierGroup {
+  id: string;
+  title: string;
+  modifiers: Modifier[] | null;
+  is_required: boolean;
+  max_selections: number;
+  min_selections: number;
+}
+
+interface Modifier {
+  id: string;
+  name: string;
+  price_adjustment: number;
+}
+
 interface MenuItem {
-  id: number;
+  id: string;
   name: string;
   price: number;
-  category: string;
+  description: string;
+  modifier_groups: ModifierGroup[] | null;
 }
 
 interface OrderItem extends MenuItem {
   quantity: number;
   customPrice?: number;
   notes?: string;
+  categoryName?: string;
 }
 
 interface OrderSidebarProps {
@@ -59,6 +76,57 @@ export default function OrderSidebar({
   const serviceFee = orderType === OrderType.DINE_IN ? subtotal * 0.10 : 0; // 10% service fee for dine-in
   const tax = subtotal * 0.13; // 13% tax
   const total = subtotal + serviceFee + tax;
+
+  // Helper function to parse and display modifiers
+  const renderModifiers = (item: OrderItem) => {
+    if (!item.notes || item.notes === '{}') return null;
+
+    try {
+      const orderData = JSON.parse(item.notes);
+      const modifiers = orderData.modifiers || {};
+      const notes = orderData.notes || '';
+      const modifierDisplay: string[] = [];
+
+      // Get all modifier groups from the item
+      if (item.modifier_groups) {
+        item.modifier_groups.forEach(group => {
+          const selectedModifierIds = modifiers[group.id];
+          if (selectedModifierIds && Array.isArray(selectedModifierIds) && selectedModifierIds.length > 0 && group.modifiers) {
+            // Map each selected modifier ID to its name and price
+            const selectedModifierNames = selectedModifierIds
+              .map(modifierId => {
+                const modifier = group.modifiers!.find(m => m.id === modifierId);
+                if (modifier) {
+                  const priceText = modifier.price_adjustment !== 0 
+                    ? ` (+$${modifier.price_adjustment.toFixed(2)})`
+                    : '';
+                  return `${modifier.name}${priceText}`;
+                }
+                return null;
+              })
+              .filter(name => name !== null);
+            
+            if (selectedModifierNames.length > 0) {
+              modifierDisplay.push(`${group.title}: ${selectedModifierNames.join(', ')}`);
+            }
+          }
+        });
+      }
+
+      return (modifierDisplay.length > 0 || notes) ? (
+        <div className="mt-1 text-xs text-gray-600 space-y-0.5">
+          {modifierDisplay.map((text, i) => (
+            <div key={i}>• {text}</div>
+          ))}
+          {notes && (
+            <div className="text-gray-500 italic mt-1">Note: {notes}</div>
+          )}
+        </div>
+      ) : null;
+    } catch {
+      return null;
+    }
+  };
 
   return (
     <div className="w-full bg-white border-l border-gray-200 flex flex-col h-full">
@@ -127,11 +195,6 @@ export default function OrderSidebar({
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#ff8f2e]"
               >
                 <option value="">{t("selectTable")}</option>
-
-                {/* 
-                Example table numbers 1-20
-                TODO: CHANGE IT IN THE FUTURE TO CONNECT TO THE DB
-                */}
                 {Array.from({ length: 20 }, (_, i) => i + 1).map((num) => (
                   <option key={num} value={num.toString()}>Table {num}</option>
                 ))}
@@ -198,49 +261,7 @@ export default function OrderSidebar({
                       <h3 className="font-medium text-sm">{item.name}</h3>
                       <p className="text-xs text-gray-500">${itemPrice.toFixed(2)} each</p>
                       {/* Display Modifiers and Notes */}
-                      {item.notes && item.notes !== '{}' && (
-                        <div className="mt-1 text-xs text-gray-600">
-                          {(() => {
-                            try {
-                              const orderData = JSON.parse(item.notes);
-                              const modifiers = orderData.modifiers || orderData;
-                              const notes = orderData.notes || '';
-                              const modifierNames: string[] = [];
-                              
-                              // Mock modifier data to match the IDs
-                              const modifierMap: Record<number, { name: string; options: Record<number, string> }> = {
-                                1: { name: "Size", options: { 1: "Small", 2: "Medium", 3: "Large" } },
-                                2: { name: "Add-ons", options: { 4: "Extra Cheese", 5: "Bacon", 6: "Avocado" } }
-                              };
-
-                              if (typeof modifiers === 'object') {
-                                Object.entries(modifiers).forEach(([modifierId, optionId]) => {
-                                  const modifier = modifierMap[Number(modifierId)];
-                                  if (modifier) {
-                                    const optionName = modifier.options[Number(optionId)];
-                                    if (optionName) {
-                                      modifierNames.push(`${modifier.name}: ${optionName}`);
-                                    }
-                                  }
-                                });
-                              }
-
-                              return (modifierNames.length > 0 || notes) ? (
-                                <div className="space-y-0.5">
-                                  {modifierNames.map((name, i) => (
-                                    <div key={i}>• {name}</div>
-                                  ))}
-                                  {notes && (
-                                    <div className="text-gray-500 italic mt-1">Note: {notes}</div>
-                                  )}
-                                </div>
-                              ) : null;
-                            } catch {
-                              return null;
-                            }
-                          })()}
-                        </div>
-                      )}
+                      {renderModifiers(item)}
                     </div>
                     <button
                       onClick={() => onRemoveItem(index)}

@@ -68,7 +68,8 @@ export default {
         navSidebar: {
             newOrder: "New Order",
             orders: "Orders",
-            settings: "Settings"
+            settings: "Settings",
+            logout: "Logout"
         }
     },
     dashboard : {
@@ -115,5 +116,16 @@ export default {
         general: "General",
         generalDescription: "Other application settings",
         comingSoon: "More settings coming soon..."
+    },
+    login: {
+        title: "Login to Your Account",
+        emailLabel: "Email Address",
+        passwordLabel: "Password",
+        loginButton: "Login",
+        forgotPassword: "Forgot Password?",
+        incorrectCredentials: "Incorrect email or password. Please try again.",
+        loginSuccess: "Logged in successfully",
+        missingFields: "Please enter both email and password.",
+        loginBtn: "Login"
     }
 }

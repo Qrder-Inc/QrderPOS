@@ -6,14 +6,34 @@ import { X, Printer } from "lucide-react";
 
 import { useTranslations } from "next-intl";
 
+interface ModifierGroup {
+  id: string;
+  title: string;
+  modifiers: Modifier[] | null;
+  is_required: boolean;
+  max_selections: number;
+  min_selections: number;
+}
 
-interface OrderItem {
-  id: number;
+interface Modifier {
+  id: string;
+  name: string;
+  price_adjustment: number;
+}
+
+interface MenuItem {
+  id: string;
   name: string;
   price: number;
+  description: string;
+  modifier_groups: ModifierGroup[] | null;
+}
+
+interface OrderItem extends MenuItem {
   quantity: number;
   customPrice?: number;
   notes?: string;
+  categoryName?: string;
 }
 
 interface CheckoutModalProps {
@@ -80,16 +100,65 @@ export default function CheckoutModal({
     window.print();
   };
 
+  // Helper function to render modifiers for receipt
+  const renderReceiptModifiers = (item: OrderItem) => {
+    if (!item.notes || item.notes === '{}') return null;
+
+    try {
+      const orderData = JSON.parse(item.notes);
+      const modifiers = orderData.modifiers || {};
+      const notes = orderData.notes || '';
+      const modifierDisplay: string[] = [];
+
+      // Get all modifier groups from the item
+      if (item.modifier_groups) {
+        item.modifier_groups.forEach(group => {
+          const selectedModifierIds = modifiers[group.id];
+          if (selectedModifierIds && Array.isArray(selectedModifierIds) && selectedModifierIds.length > 0 && group.modifiers) {
+            // Map each selected modifier ID to its name and price
+            const selectedModifierNames = selectedModifierIds
+              .map(modifierId => {
+                const modifier = group.modifiers!.find(m => m.id === modifierId);
+                if (modifier) {
+                  const priceText = modifier.price_adjustment !== 0 
+                    ? ` (+$${modifier.price_adjustment.toFixed(2)})`
+                    : '';
+                  return `${modifier.name}${priceText}`;
+                }
+                return null;
+              })
+              .filter(name => name !== null);
+            
+            if (selectedModifierNames.length > 0) {
+              modifierDisplay.push(`${group.title}: ${selectedModifierNames.join(', ')}`);
+            }
+          }
+        });
+      }
+
+      return (
+        <>
+          {modifierDisplay.map((text, i) => (
+            <div key={i}>• {text}</div>
+          ))}
+          {notes && <div style={{ fontStyle: "italic" }}>Note: {notes}</div>}
+        </>
+      );
+    } catch {
+      return null;
+    }
+  };
+
   return (
     <>
       {/* ---------------- PRINT-ONLY RECEIPT ---------------- */}
       <div className="print-receipt hidden print:block">
         <div className="text-center mb-4">
           <h1 className="print-title mb-1">{restaurantName}</h1>
-          <div className="print-small">Recibo</div>
+          <div className="print-small">Receipt</div>
           <div className="print-small">{new Date().toLocaleString()}</div>
-          <div className="mt-1 font-bold print-small">Orden: {orderCode}</div>
-          <div className="print-small">Consumo: {orderType}</div>
+          <div className="mt-1 font-bold print-small">Order: {orderCode}</div>
+          <div className="print-small">Type: {orderType}</div>
         </div>
 
         <div style={{ borderTop: "1px dashed #ddd", margin: "6px 0" }} />
@@ -98,8 +167,8 @@ export default function CheckoutModal({
           <thead>
             <tr className="print-small">
               <th style={{ textAlign: "left" }}>Item</th>
-              <th style={{ textAlign: "center" }}>Cant</th>
-              <th style={{ textAlign: "right" }}>Precio</th>
+              <th style={{ textAlign: "center" }}>Qty</th>
+              <th style={{ textAlign: "right" }}>Price</th>
               <th style={{ textAlign: "right" }}>Total</th>
             </tr>
           </thead>
@@ -110,45 +179,11 @@ export default function CheckoutModal({
               return (
                 <tr key={index} className="print-small">
                   <td style={{ paddingTop: 6, paddingBottom: 6 }}>
-                    <div>{item.name}</div>
+                    <div style={{ fontWeight: 600 }}>{item.name}</div>
 
                     {item.notes && item.notes !== "{}" && (
-                      <div className="text-base print-small mt-1">
-                        {(() => {
-                          try {
-                            const orderData = JSON.parse(item.notes);
-                            const modifiers = orderData.modifiers || {};
-                            const notes = orderData.notes || "";
-                            const modifierNames: string[] = [];
-
-                            const modifierMap: Record<number, { name: string; options: Record<number, string> }> = {
-                              1: { name: "Size", options: { 1: "Small", 2: "Medium", 3: "Large" } },
-                              2: { name: "Add-ons", options: { 4: "Extra Cheese", 5: "Bacon", 6: "Avocado" } }
-                            };
-
-                            Object.entries(modifiers).forEach(([modifierId, optionId]) => {
-                              const modifier = modifierMap[Number(modifierId)];
-                              if (modifier) {
-                                const optionName = modifier.options[Number(optionId)];
-                                if (optionName) {
-                                  modifierNames.push(`${modifier.name}: ${optionName}`);
-                                }
-                              }
-                            });
-
-                            return (
-                              <>
-                                {modifierNames.map((name, i) => (
-                                  <div key={i}>• {name}</div>
-                                ))}
-                                {notes && <div style={{ fontStyle: "italic" }}>Note: {notes}</div>}
-                              </>
-                            );
-                          } catch {
-                            // if notes is not JSON, print raw text truncated to a line
-                            return <div>• {String(item.notes).substring(0, 100)}</div>;
-                          }
-                        })()}
+                      <div className="text-base print-small mt-1" style={{ color: "#555" }}>
+                        {renderReceiptModifiers(item)}
                       </div>
                     )}
                   </td>
@@ -180,17 +215,17 @@ export default function CheckoutModal({
 
           {serviceFee > 0 && (
             <div style={{ display: "flex", justifyContent: "space-between" }}>
-              <span>Service Fee:</span>
+              <span>Service Fee (10%):</span>
               <span>${serviceFee.toFixed(2)}</span>
             </div>
           )}
 
           <div style={{ display: "flex", justifyContent: "space-between" }}>
-            <span>Tax:</span>
+            <span>Tax (13%):</span>
             <span>${tax.toFixed(2)}</span>
           </div>
 
-          <div style={{ display: "flex", justifyContent: "space-between", marginTop: 6, fontWeight: 700 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", marginTop: 6, fontWeight: 700, fontSize: "14px" }}>
             <span>Total:</span>
             <span>${localTotal.toFixed(2)}</span>
           </div>
@@ -208,7 +243,7 @@ export default function CheckoutModal({
             <span>${amountPaidNum.toFixed(2)}</span>
           </div>
           {change > 0 && (
-            <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", fontWeight: 600 }}>
               <span>Change:</span>
               <span>${change.toFixed(2)}</span>
             </div>
@@ -229,7 +264,7 @@ export default function CheckoutModal({
         onClick={onClose}
       >
         <div
-          className="bg-white rounded-lg p-6 max-w-md w-full mx-4 shadow-xl"
+          className="bg-white rounded-lg p-6 max-w-2xl w-full mx-4 shadow-xl max-h-[90vh] overflow-y-auto"
           onClick={(e) => e.stopPropagation()}
         >
           <div className="flex items-center justify-between mb-6">
@@ -239,10 +274,90 @@ export default function CheckoutModal({
             </button>
           </div>
 
+          {/* Order Summary Section */}
+          <div className="mb-6 bg-gray-50 rounded-lg p-4">
+            <h3 className="font-semibold mb-3 text-sm text-gray-700">Order Summary</h3>
+            <div className="space-y-2 max-h-60 overflow-y-auto">
+              {orderItems.map((item, index) => {
+                const itemPrice = item.customPrice ?? item.price;
+                return (
+                  <div key={index} className="flex justify-between items-start text-sm pb-2 border-b border-gray-200 last:border-b-0">
+                    <div className="flex-1">
+                      <div className="font-medium">{item.name}</div>
+                      {item.categoryName && (
+                        <div className="text-xs text-gray-400">{item.categoryName}</div>
+                      )}
+                      <div className="text-xs text-gray-500">
+                        ${itemPrice.toFixed(2)} × {item.quantity}
+                      </div>
+                      {/* Display modifiers */}
+                      {item.notes && item.notes !== '{}' && (
+                        <div className="text-xs text-gray-600 mt-1">
+                          {(() => {
+                            try {
+                              const orderData = JSON.parse(item.notes);
+                              const modifiers = orderData.modifiers || {};
+                              const notes = orderData.notes || '';
+                              const modifierDisplay: string[] = [];
+
+                              if (item.modifier_groups) {
+                                item.modifier_groups.forEach(group => {
+                                  const selectedModifierId = modifiers[group.id];
+                                  if (selectedModifierId && group.modifiers) {
+                                    const selectedModifier = group.modifiers.find(m => m.id === selectedModifierId);
+                                    if (selectedModifier) {
+                                      modifierDisplay.push(`${group.title}: ${selectedModifier.name}`);
+                                    }
+                                  }
+                                });
+                              }
+
+                              return (
+                                <>
+                                  {modifierDisplay.map((text, i) => (
+                                    <div key={i}>• {text}</div>
+                                  ))}
+                                  {notes && <div className="italic text-gray-500">Note: {notes}</div>}
+                                </>
+                              );
+                            } catch {
+                              return null;
+                            }
+                          })()}
+                        </div>
+                      )}
+                    </div>
+                    <div className="font-semibold ml-4">
+                      ${(itemPrice * item.quantity).toFixed(2)}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
           {/* Total Amount */}
           <div className="bg-gray-50 p-4 rounded-lg mb-6">
-            <div className="text-sm text-gray-600 mb-1">Total Amount</div>
-            <div className="text-3xl font-bold text-[#ff8f2e]">${localTotal.toFixed(2)}</div>
+            <div className="space-y-2 text-sm mb-3">
+              <div className="flex justify-between">
+                <span className="text-gray-600">Subtotal:</span>
+                <span className="font-medium">${subtotal.toFixed(2)}</span>
+              </div>
+              {serviceFee > 0 && (
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Service Fee (10%):</span>
+                  <span className="font-medium">${serviceFee.toFixed(2)}</span>
+                </div>
+              )}
+              <div className="flex justify-between">
+                <span className="text-gray-600">Tax (13%):</span>
+                <span className="font-medium">${tax.toFixed(2)}</span>
+              </div>
+            </div>
+            <div className="border-t pt-3 flex justify-between items-center">
+              <span className="text-sm text-gray-600">Total Amount</span>
+              <span className="text-3xl font-bold text-[#ff8f2e]">${localTotal.toFixed(2)}</span>
+            </div>
           </div>
 
           {/* Payment Type */}
@@ -250,7 +365,7 @@ export default function CheckoutModal({
             <label className="block text-sm font-medium text-gray-700 mb-3">Payment Method</label>
             <div className="grid grid-cols-2 gap-2">
               {paymentTypes.map((type) => (
-                <Button
+                <button
                   key={type.id}
                   onClick={() => setPaymentType(type.id)}
                   className={`px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
@@ -259,7 +374,7 @@ export default function CheckoutModal({
                   type="button"
                 >
                   {type.label}
-                </Button>
+                </button>
               ))}
             </div>
           </div>
@@ -278,7 +393,7 @@ export default function CheckoutModal({
                 placeholder="0.00"
               />
             </div>
-            {amountPaidNum < localTotal && (
+            {amountPaidNum <= localTotal && (
               <p className="text-red-500 text-xs mt-1">
                 Amount paid must be at least ${localTotal.toFixed(2)}
               </p>

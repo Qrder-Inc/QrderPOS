@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { BarChart3, TrendingUp, User, LogOut } from 'lucide-react';
+import { TrendingUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 

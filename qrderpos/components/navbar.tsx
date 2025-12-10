@@ -2,20 +2,19 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-// import { useAuth } from "@/contexts/AuthProvider";
+import { useAuth } from "@/context/AuthProvider";
 import { useRouter } from "@/i18n/navigation";
 import Image from "next/image";
 import { PUBLIC_ROUTES } from "@/config/routes";
 
 export function Navbar() {
     const router = useRouter();
+    const { user, loading, signOut } = useAuth();
 
     const handleSignOut = async () => {
-    router.push(PUBLIC_ROUTES.LOGIN);
+        await signOut();
+        router.push(PUBLIC_ROUTES.LOGIN);
     };
-
-    const user = null;
-    const loading = false;
 
     return (
         <nav className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">

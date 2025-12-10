@@ -77,7 +77,8 @@ export default {
     navSidebar: {
       newOrder: "Nuevo Pedido",
       orders: "Pedidos",
-      settings: "Configuración"
+      settings: "Configuración",
+      logout: "Cerrar Sesión"
     }
   },
   dashboard: {
@@ -114,5 +115,16 @@ export default {
     general: "General",
     generalDescription: "Otras configuraciones de la aplicación",
     comingSoon: "Más configuraciones próximamente..."
+  },
+  login: {
+    title: "Iniciar Sesión en Tu Cuenta",
+    emailLabel: "Correo Electrónico",
+    passwordLabel: "Contraseña",
+    loginButton: "Iniciar Sesión",
+    forgotPassword: "¿Olvidaste tu contraseña?",
+    incorrectCredentials: "Por favor, verifica tus credenciales e intenta nuevamente.",
+    loginSuccess: "¡Inicio de sesión exitoso!",
+    missingFields: "Por favor, ingresa tu correo y contraseña.",
+    loginBtn: "Iniciar Sesión"
   }
 }

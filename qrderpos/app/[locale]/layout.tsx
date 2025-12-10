@@ -2,6 +2,7 @@ import type {Metadata} from "next";
 import {Geist, Geist_Mono} from "next/font/google";
 import "../globals.css";
 
+import { AuthProvider } from "@/context/AuthProvider";
 import {NextIntlClientProvider} from "next-intl";
 import {setRequestLocale} from "next-intl/server";
 import {routing} from "@/i18n/routing";
@@ -39,10 +40,12 @@ export default async function LocaleLayout({
     return (
         <html lang={locale}>
             <NextIntlClientProvider locale={locale} messages={messages}>
-                <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-                    {/* <Navbar /> */}
-                    {children}
-                </body>
+                <AuthProvider>
+                    <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+                        {/* <Navbar /> */}
+                        {children}
+                    </body>
+                </AuthProvider>
             </NextIntlClientProvider>
         </html>
     );

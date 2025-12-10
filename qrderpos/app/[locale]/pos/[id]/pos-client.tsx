@@ -1,11 +1,11 @@
 "use client";
 
 // Import page components
-import ProductCard from "./components/productCard";
-import CheckoutModal from "./components/checkoutModal";
-import NavSideBar from "./components/leftSidebar";
-import OrderSidebar from "./components/orderSidebar";
-import ModifierModal from "./components/modifierModal";
+import ProductCard from "../components/productCard";
+import CheckoutModal from "../components/checkoutModal";
+import NavSideBar from "../components/leftSidebar";
+import OrderSidebar from "../components/orderSidebar";
+import ModifierModal from "../components/modifierModal";
 
 // Import external components and icons
 import { Search, Wifi, ChevronDown } from "lucide-react";
@@ -27,103 +27,6 @@ const POSPageInfo = {
     restaurantName: "Sample Restaurant",
     restaurantLogo: "/logo.png"
 }
-
-// New data structure based on the JSON
-const MOCK_DATA = {
-    "restaurant": {
-        "id": "ff588c20-39f1-4415-b2ac-74a11d715f7c",
-        "name": "Sample Restaurant",
-        "menus": [
-            {
-                "id": "c89d9aad-a3dc-4232-89ad-69f520489e6b",
-                "name": "Main Menu",
-                "categories": [
-                    {
-                        "id": "49b81c37-4f15-4ce0-a00b-6669ce34643e",
-                        "name": "Appetizers",
-                        "items": [
-                            {
-                                "id": "13cccf80-b684-4111-9c72-ed619e1072e0",
-                                "name": "Spring Rolls",
-                                "price": 5.99,
-                                "description": "Crispy vegetable spring rolls.",
-                                "modifier_groups": null
-                            }
-                        ],
-                        "description": "Start your meal with our delicious appetizers."
-                    },
-                    {
-                        "id": "acdefb6a-5d6c-4319-a32b-3c8e61c529a1",
-                        "name": "Main Courses",
-                        "items": [
-                            {
-                                "id": "2d8ce185-f935-4a2c-901f-c9455a70f74b",
-                                "name": "Grilled Chicken",
-                                "price": 12.99,
-                                "description": "Juicy grilled chicken with herbs.",
-                                "modifier_groups": [
-                                    {
-                                        "id": "b19e3ddf-72c6-4aad-8830-9c686ea0b219",
-                                        "title": "Sauce Options",
-                                        "modifiers": [
-                                            {
-                                                "id": "7bcf91a0-5c3e-4980-884f-cbb7c38b8510",
-                                                "name": "BBQ Sauce",
-                                                "price_adjustment": 0
-                                            },
-                                            {
-                                                "id": "ee471c97-a512-49de-96d5-18e64a4243a3",
-                                                "name": "Ranch Dressing",
-                                                "price_adjustment": 0
-                                            }
-                                        ],
-                                        "is_required": true,
-                                        "max_selections": 2,
-                                        "min_selections": 1
-                                    },
-                                    {
-                                        "id": "6a1ee734-4b6b-4367-b809-7362066dfdb5",
-                                        "title": "Side Dishes",
-                                        "modifiers": [
-                                            {
-                                                "id": "8a1ee734-4b6b-4367-b809-7362066dfdb5",
-                                                "name": "Fries",
-                                                "price_adjustment": 2.5
-                                            },
-                                            {
-                                                "id": "9a1ee734-4b6b-4367-b809-7362066dfdb5",
-                                                "name": "Salad",
-                                                "price_adjustment": 3.0
-                                            }
-                                        ],
-                                        "is_required": false,
-                                        "max_selections": 2,
-                                        "min_selections": 0
-                                    }
-                                ]
-                            }
-                        ],
-                        "description": "Hearty and satisfying main dishes."
-                    },
-                    {
-                        "id": "2a0b6fa2-fbd4-4acd-af33-e8815bef0473",
-                        "name": "Desserts",
-                        "items": [
-                            {
-                                "id": "4b969619-b2ff-4f49-9981-0990d3106a39",
-                                "name": "Chocolate Cake",
-                                "price": 6.49,
-                                "description": "Decadent chocolate layered cake.",
-                                "modifier_groups": null
-                            }
-                        ],
-                        "description": "Sweet treats to finish your meal."
-                    }
-                ]
-            }
-        ]
-    }
-};
 
 interface Menu {
     id: string;
@@ -168,11 +71,25 @@ interface OrderItem extends MenuItem {
     categoryName?: string;
 }
 
-export default function POSPage() {
+interface RestaurantData {
+    restaurant: {
+        id: string;
+        name: string;
+        menus: Menu[];
+    };
+}
+
+interface POSClientProps {
+    restaurantData: RestaurantData;
+}
+
+export default function POSClient({ restaurantData }: POSClientProps) {
     const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
     const [sidebarWidth, setSidebarWidth] = useState(384);
     const [isResizing, setIsResizing] = useState(false);
-    const [selectedMenu, setSelectedMenu] = useState<Menu | null>(MOCK_DATA.restaurant.menus[0]);
+    const [selectedMenu, setSelectedMenu] = useState<Menu | null>(
+        restaurantData.restaurant.menus[0] || null
+    );
     const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
     const [showModifierModal, setShowModifierModal] = useState(false);
     const [showCheckoutModal, setShowCheckoutModal] = useState(false);
@@ -363,8 +280,11 @@ export default function POSPage() {
     // Get all items from selected menu
     const getAllItems = (): { item: MenuItem; categoryName: string }[] => {
         if (!selectedMenu) return [];
+
         
         const items: { item: MenuItem; categoryName: string }[] = [];
+        
+
         selectedMenu.categories.forEach(category => {
             category.items.forEach(item => {
                 items.push({ item, categoryName: category.name });
@@ -388,7 +308,7 @@ export default function POSPage() {
                 <div className="flex items-center justify-between mb-6">
                     <div className="flex items-center gap-4">
                         <Image src={POSPageInfo.restaurantLogo} alt={POSPageInfo.restaurantName} width={50} height={50} />
-                        <h1 className="text-2xl font-bold">{MOCK_DATA.restaurant.name}</h1>
+                        <h1 className="text-2xl font-bold">{restaurantData.restaurant.name}</h1>
                     </div>
                     <div className="flex items-center gap-4">
                         <div className="relative">
@@ -413,7 +333,7 @@ export default function POSPage() {
                                 <ChevronDown className="h-4 w-4" />
                             </DropdownMenuTrigger>
                             <DropdownMenuContent>
-                                {MOCK_DATA.restaurant.menus.map((menu) => (
+                                {restaurantData.restaurant.menus.map((menu) => (
                                     <DropdownMenuItem
                                         key={menu.id}
                                         onClick={() => {
@@ -545,7 +465,7 @@ export default function POSPage() {
                     return subtotal * 0.13;
                 })()}
                 orderItems={orderItems}
-                restaurantName={MOCK_DATA.restaurant.name}
+                restaurantName={restaurantData.restaurant.name}
                 orderCode={orderCode}
                 orderType={orderType}
                 onConfirmPayment={handleConfirmPayment}
