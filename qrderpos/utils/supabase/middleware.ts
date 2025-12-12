@@ -1,7 +1,7 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
-import { getCurrentUser, getUserRoles } from '@/dal/user';
 import { AUTH_ROUTES, PUBLIC_ROUTES } from '@/config/routes';
+import { getUserMembership } from '@/dal/user';
 
 export async function updateSession(request: NextRequest) {
     let supabaseResponse = NextResponse.next({
@@ -68,7 +68,7 @@ export async function updateSession(request: NextRequest) {
 
     // ** --------- CHECK USER ROLES AND REDIRECT ACCORDINGLY --------- **
     if (user && pathnameWithoutLocale.startsWith(AUTH_ROUTES.MANAGER)) {
-      const roles = await getUserRoles();
+      const roles = await getUserMembership();
       const isOwner = roles.role === 'owner';
       if (!isOwner) {
         const url = request.nextUrl.clone()
@@ -77,17 +77,6 @@ export async function updateSession(request: NextRequest) {
         url.pathname = `/${locale}${AUTH_ROUTES.UNAUTHORIZED}`
         return NextResponse.redirect(url)
       }
-    }
-
-    // ** --------- REDIRECT TO POS WITH RESTAURANT ID --------- **
-    if (user && pathnameWithoutLocale === (AUTH_ROUTES.POS)) {
-      const roles = await getUserRoles();
-      console.log("User roles in middleware:", roles.restaurant_id);
-      const url = request.nextUrl.clone()
-      // Get locale from cookie or use default
-      const locale = request.cookies.get('NEXT_LOCALE')?.value || 'es';
-      url.pathname = `/${locale}/pos/${roles.restaurant_id}/`
-      return NextResponse.redirect(url)
     }
 
     return supabaseResponse;

@@ -1,11 +1,11 @@
 "use client";
 
 // Import page components
-import ProductCard from "../components/productCard";
-import CheckoutModal from "../components/checkoutModal";
-import NavSideBar from "../components/leftSidebar";
-import OrderSidebar from "../components/orderSidebar";
-import ModifierModal from "../components/modifierModal";
+import ProductCard from "./components/productCard";
+import CheckoutModal from "./components/checkoutModal";
+import NavSideBar from "./components/leftSidebar";
+import OrderSidebar from "./components/orderSidebar";
+import ModifierModal from "./components/modifierModal";
 
 // Import external components and icons
 import { Search, Wifi, ChevronDown } from "lucide-react";
@@ -20,76 +20,23 @@ import {
 // Other imports
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
-import { OrderType } from "@/types/order";
 import { useTranslations } from "next-intl";
 
-const POSPageInfo = {
-    restaurantName: "Sample Restaurant",
-    restaurantLogo: "/logo.png"
-}
-
-interface Menu {
-    id: string;
-    name: string;
-    categories: Category[];
-}
-
-interface Category {
-    id: string;
-    name: string;
-    items: MenuItem[];
-    description: string;
-}
-
-interface MenuItem {
-    id: string;
-    name: string;
-    price: number;
-    description: string;
-    modifier_groups: ModifierGroup[] | null;
-}
-
-interface ModifierGroup {
-    id: string;
-    title: string;
-    modifiers: Modifier[] | null;
-    is_required: boolean;
-    max_selections: number;
-    min_selections: number;
-}
-
-interface Modifier {
-    id: string;
-    name: string;
-    price_adjustment: number;
-}
-
-interface OrderItem extends MenuItem {
-    quantity: number;
-    customPrice?: number;
-    notes?: string;
-    categoryName?: string;
-}
-
-interface RestaurantData {
-    restaurant: {
-        id: string;
-        name: string;
-        menus: Menu[];
-    };
-}
+import { Restaurant } from "@/types/restaurant";
+import { Menu, Category, MenuItem, OrderItem} from "@/types/menu";
+import { OrderType } from "@/types/order";
 
 interface POSClientProps {
-    restaurantData: RestaurantData;
+    restaurantData: Restaurant;
 }
 
-export default function POSClient({ restaurantData }: POSClientProps) {
+export default function POS({ restaurantData }: POSClientProps) {
     const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
     const [sidebarWidth, setSidebarWidth] = useState(384);
     const [isResizing, setIsResizing] = useState(false);
     const [selectedMenu, setSelectedMenu] = useState<Menu | null>(
         restaurantData.restaurant.menus[0] || null
-    );
+);
     const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
     const [showModifierModal, setShowModifierModal] = useState(false);
     const [showCheckoutModal, setShowCheckoutModal] = useState(false);
@@ -307,7 +254,7 @@ export default function POSClient({ restaurantData }: POSClientProps) {
             <div className="flex-1 flex flex-col p-6" style={{ backgroundColor: '#f5f5f5' }}>
                 <div className="flex items-center justify-between mb-6">
                     <div className="flex items-center gap-4">
-                        <Image src={POSPageInfo.restaurantLogo} alt={POSPageInfo.restaurantName} width={50} height={50} />
+                        <Image src="/logo.png"  alt={restaurantData.restaurant.name} width={50} height={50} />
                         <h1 className="text-2xl font-bold">{restaurantData.restaurant.name}</h1>
                     </div>
                     <div className="flex items-center gap-4">

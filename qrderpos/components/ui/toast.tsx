@@ -40,7 +40,7 @@ export function Toast({
   className,
 }: ToastProps) {
   const [isVisible, setIsVisible] = useState(true);
-  const [isAnimating, setIsAnimating] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(true);
 
   const handleClose = useCallback(() => {
     setIsAnimating(false);
@@ -51,9 +51,6 @@ export function Toast({
   }, [onClose]);
 
   useEffect(() => {
-    // Start entrance animation
-    setIsAnimating(true);
-    
     const timer = setTimeout(() => {
       handleClose();
     }, duration);

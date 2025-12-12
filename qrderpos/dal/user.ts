@@ -1,4 +1,5 @@
 import { createClient } from "@/utils/supabase/server";
+import { Role } from "@/types/role";
 
 interface Roles {
     restaurant_id: string;
@@ -15,18 +16,15 @@ export const getCurrentUser = async () => {
     return user;
 }
 
-export const getUserRoles = async (): Promise<Roles> => {
-    const supabase = await createClient();
-
-    const {
-        data: { user },
-    } = await supabase.auth.getUser();
-
+export const getUserMembership = async (): Promise<Roles> => {
+    
+    const user = await getCurrentUser();
+    
     if (!user) {
-        return {restaurant_id: '', role: 'user'} as Roles;
+        return {restaurant_id: '', role: Role.USER} as Roles;
     }
-
-    // console.log("Fetched user:", user);
+    
+    const supabase = await createClient();
 
     const { data, error } = await supabase
         .from("restaurant_membership")
@@ -34,9 +32,8 @@ export const getUserRoles = async (): Promise<Roles> => {
         .eq("user_id", user.id);
 
     if (error) {
-        console.error("Error fetching user roles:", error);
-        return {restaurant_id: '', role: 'user'} as Roles;
+        return {restaurant_id: '', role: Role.USER} as Roles;
     }
 
-    return {restaurant_id: data[0]?.restaurant_id || '', role: data[0]?.role || 'user'} as Roles;
+    return {restaurant_id: data[0]?.restaurant_id || '', role: data[0]?.role || Role.USER} as Roles;
 }

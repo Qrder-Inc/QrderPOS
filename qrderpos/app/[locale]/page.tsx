@@ -16,7 +16,7 @@ export default function Home() {
               Choose Your Interface
             </h1>
             <p className="text-lg text-gray-600">
-              Select where you'd like to go to begin your work session.
+              Select where you&apos;d like to go to begin your work session.
             </p>
           </div>
 

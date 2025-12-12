@@ -1,60 +1,49 @@
 // types/menu.ts
-
-export interface Modifier {
-  id: string;
-  name: string;
-  price_adjustment: number;
-  is_default?: boolean;
-}
-
-export interface ModifierGroup {
-  id: string;
-  title: string;
-  is_required: boolean;
-  min_selections: number;
-  max_selections: number;
-  display_order?: number;
-  modifiers: Modifier[] | null;
-}
-
-export interface MenuItem {
-  id: string;
-  name: string;
-  price: number;
-  description: string | null;
-  modifier_groups: ModifierGroup[] | null;
-}
-
-export interface Category {
-  id: string;
-  name: string;
-  description: string | null;
-  items: MenuItem[];
-}
-
 export interface Menu {
   id: string;
   name: string;
   categories: Category[];
 }
+export interface Category {
+    id: string;
+    name: string;
+    items: MenuItem[];
+    description: string;
+}
 
-export interface Restaurant {
-  id: string;
-  name: string;
-  menus: Menu[];
+export interface MenuItem {
+    id: string;
+    name: string;
+    price: number;
+    description: string;
+    modifier_groups: ModifierGroup[] | null;
+}
+
+export interface ModifierGroup {
+    id: string;
+    title: string;
+    modifiers: Modifier[] | null;
+    is_required: boolean;
+    max_selections: number;
+    min_selections: number;
+}
+
+export interface Modifier {
+    id: string;
+    name: string;
+    price_adjustment: number;
+}
+export interface OrderItem extends MenuItem {
+    quantity: number;
+    customPrice?: number;
+    notes?: string;
+    categoryName?: string;
 }
 
 // For order items with selected modifiers
 export interface SelectedModifier {
   modifier_group_id: string;
   modifier_ids: string[]; // Array to support multiple selections
-}
-
-export interface OrderItem extends MenuItem {
-  quantity: number;
-  selected_modifiers: SelectedModifier[];
-  notes?: string;
-  final_price: number; // Calculated price with modifiers
 }
 
 // Helper function to calculate item price with modifiers
@@ -112,41 +101,41 @@ export function validateModifierSelections(
   };
 }
 
-// Helper to get default modifiers for an item
-export function getDefaultModifiers(item: MenuItem): SelectedModifier[] {
-  if (!item.modifier_groups) return [];
+// // Helper to get default modifiers for an item
+// export function getDefaultModifiers(item: MenuItem): SelectedModifier[] {
+//   if (!item.modifier_groups) return [];
 
-  return item.modifier_groups
-    .map(group => {
-      if (!group.modifiers) return null;
+//   return item.modifier_groups
+//     .map(group => {
+//       if (!group.modifiers) return null;
 
-      // Find default modifiers
-      const defaultModifiers = group.modifiers
-        .filter(m => m.is_default)
-        .map(m => m.id);
+//       // Find default modifiers
+//       const defaultModifiers = group.modifiers
+//         .filter(m => m.is_default)
+//         .map(m => m.id);
 
-      // If no defaults and group is required, select first option up to min_selections
-      if (defaultModifiers.length === 0 && group.is_required) {
-        const firstOptions = group.modifiers
-          .slice(0, group.min_selections)
-          .map(m => m.id);
+//       // If no defaults and group is required, select first option up to min_selections
+//       if (defaultModifiers.length === 0 && group.is_required) {
+//         const firstOptions = group.modifiers
+//           .slice(0, group.min_selections)
+//           .map(m => m.id);
         
-        if (firstOptions.length > 0) {
-          return {
-            modifier_group_id: group.id,
-            modifier_ids: firstOptions
-          };
-        }
-      }
+//         if (firstOptions.length > 0) {
+//           return {
+//             modifier_group_id: group.id,
+//             modifier_ids: firstOptions
+//           };
+//         }
+//       }
 
-      if (defaultModifiers.length > 0) {
-        return {
-          modifier_group_id: group.id,
-          modifier_ids: defaultModifiers
-        };
-      }
+//       if (defaultModifiers.length > 0) {
+//         return {
+//           modifier_group_id: group.id,
+//           modifier_ids: defaultModifiers
+//         };
+//       }
 
-      return null;
-    })
-    .filter((s): s is SelectedModifier => s !== null);
-}
+//       return null;
+//     })
+//     .filter((s): s is SelectedModifier => s !== null);
+// }

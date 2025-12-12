@@ -9,7 +9,7 @@ export async function GET(
     const { id } = await context.params;
 
     const supabase = await createClient();
-    let { data, error } = await supabase
+    const { data, error } = await supabase
     .rpc('get_restaurant_info', {
         p_restaurant_id: id
     })

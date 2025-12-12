@@ -1,29 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-
-interface Modifier {
-    id: string;
-    name: string;
-    price_adjustment: number;
-}
-
-interface ModifierGroup {
-    id: string;
-    title: string;
-    modifiers: Modifier[] | null;
-    is_required: boolean;
-    max_selections: number;
-    min_selections: number;
-}
-
-interface MenuItem {
-    id: string;
-    name: string;
-    price: number;
-    description: string;
-    modifier_groups: ModifierGroup[] | null;
-}
+import { MenuItem, ModifierGroup } from "@/types/menu";
 
 interface ModifierModalProps {
     isOpen: boolean;

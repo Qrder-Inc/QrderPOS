@@ -6,36 +6,7 @@ import { X, Printer } from "lucide-react";
 
 import { useTranslations } from "next-intl";
 
-interface ModifierGroup {
-  id: string;
-  title: string;
-  modifiers: Modifier[] | null;
-  is_required: boolean;
-  max_selections: number;
-  min_selections: number;
-}
-
-interface Modifier {
-  id: string;
-  name: string;
-  price_adjustment: number;
-}
-
-interface MenuItem {
-  id: string;
-  name: string;
-  price: number;
-  description: string;
-  modifier_groups: ModifierGroup[] | null;
-}
-
-interface OrderItem extends MenuItem {
-  quantity: number;
-  customPrice?: number;
-  notes?: string;
-  categoryName?: string;
-}
-
+import { OrderItem } from "@/types/menu";
 interface CheckoutModalProps {
   isOpen: boolean;
   onClose: () => void;

@@ -7,38 +7,9 @@ import { Button } from '@/components/ui/button';
 // import Translations
 import { useTranslations } from 'next-intl';
 
-// import Types
+// import Types and Interfaces
 import { OrderType } from '@/types/order';
-
-interface ModifierGroup {
-  id: string;
-  title: string;
-  modifiers: Modifier[] | null;
-  is_required: boolean;
-  max_selections: number;
-  min_selections: number;
-}
-
-interface Modifier {
-  id: string;
-  name: string;
-  price_adjustment: number;
-}
-
-interface MenuItem {
-  id: string;
-  name: string;
-  price: number;
-  description: string;
-  modifier_groups: ModifierGroup[] | null;
-}
-
-interface OrderItem extends MenuItem {
-  quantity: number;
-  customPrice?: number;
-  notes?: string;
-  categoryName?: string;
-}
+import { OrderItem } from '@/types/menu';
 
 interface OrderSidebarProps {
   orderItems: OrderItem[];

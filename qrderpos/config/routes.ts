@@ -1,5 +1,3 @@
-import { unauthorized } from "next/navigation";
-
 export const PUBLIC_ROUTES = {
     HOME: '/',
     LOGIN: '/login',

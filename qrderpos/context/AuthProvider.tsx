@@ -10,12 +10,6 @@ interface AuthContextType {
     session: Session | null;
     loading: boolean;
     signOut: () => Promise<void>;
-    roles: Roles[];
-}
-
-interface Roles {
-    restaurant_id: string;
-    role: string;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -25,7 +19,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const [user, setUser] = useState<User | null>(null);
     const [session, setSession] = useState<Session | null>(null);
     const [loading, setLoading] = useState(true);
-    const [roles, setRoles] = useState<Roles[]>([]);
 
     const supabase = createClient();
 
@@ -34,7 +27,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             setSession(session);
             setUser(session?.user ?? null);
             setLoading(false);
-            if (session?.user) fetchRoles(session.user.id);
         });
 
         const {
@@ -43,8 +35,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             setSession(session);
             setUser(session?.user ?? null);
             setLoading(false);
-            if (session?.user) fetchRoles(session.user.id);
-            else setRoles([{ restaurant_id: "", role: "user" }]);
         });
 
         return () => {
@@ -52,21 +42,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         };
     }, [supabase]);
 
-    async function fetchRoles(userId: string) {
-        const { data, error } = await supabase
-            .from("restaurant_membership")
-            .select("restaurant_id, role")
-            .eq("user_id", userId);
-            if (!error) setRoles(data);
-    };
-
     async function signOut() {
         await supabase.auth.signOut();
         // Refresh the page after sign out
         window.location.href = '/';
     }
 
-    const value = { user, session, loading, signOut, roles };
+    const value = { user, session, loading, signOut };
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 };
