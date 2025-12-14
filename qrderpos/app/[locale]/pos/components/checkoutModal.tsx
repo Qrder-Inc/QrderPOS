@@ -39,7 +39,7 @@ export default function CheckoutModal({
   const [amountPaid, setAmountPaid] = useState<string>(total.toFixed(2));
   const [localTotal, setLocalTotal] = useState<number>(total);
 
-  const t = useTranslations("pos");
+  // const t = useTranslations("pos");
 
   useEffect(() => {
     // Keep amountPaid synced when total changes (e.g., item removed)
