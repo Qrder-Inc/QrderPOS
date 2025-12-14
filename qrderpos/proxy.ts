@@ -9,19 +9,25 @@ import { updateSession } from "./utils/supabase/middleware";
 const intlMiddleware = createMiddleware(routing);
 
 export async function proxy(request: NextRequest) {
-  // --- 1. Run Supabase session update first
   const supabaseResponse = await updateSession(request);
-  
-  // --- 2. If Supabase redirects (login required), return that
+
   if (supabaseResponse.headers.get('location')) {
     return supabaseResponse;
   }
-  
-  // --- 3. Otherwise, run next-intl middleware
+
   const intlResponse = intlMiddleware(request);
-  
-  // --- 4. Return intl response if it exists, otherwise supabase response
-  return intlResponse || supabaseResponse;
+
+  if (intlResponse) {
+    // Preserve Supabase cookies
+    supabaseResponse.headers.forEach((value, key) => {
+      if (key === 'set-cookie') {
+        intlResponse.headers.append(key, value);
+      }
+    });
+    return intlResponse;
+  }
+
+  return supabaseResponse;
 }
 
 // --- Unified Proxy-Friendly Matcher ---

@@ -1,5 +1,7 @@
 import { createClient } from "@/utils/supabase/server";
 import { Role } from "@/types/role";
+import { redirect } from "next/navigation";
+import { PUBLIC_ROUTES } from "@/config/routes";
 
 interface Roles {
     restaurant_id: string;
@@ -12,6 +14,10 @@ export const getCurrentUser = async () => {
     const {
         data: { user },
     } = await supabase.auth.getUser();
+
+    if (!user) {
+        redirect(PUBLIC_ROUTES.LOGIN);
+    }
 
     return user;
 }

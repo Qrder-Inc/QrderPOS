@@ -92,7 +92,7 @@ export default function CheckoutModal({
                 const modifier = group.modifiers!.find(m => m.id === modifierId);
                 if (modifier) {
                   const priceText = modifier.price_adjustment !== 0 
-                    ? ` (+$${modifier.price_adjustment.toFixed(2)})`
+                    ? ` (+₡${modifier.price_adjustment.toFixed(2)})`
                     : '';
                   return `${modifier.name}${priceText}`;
                 }
@@ -164,11 +164,11 @@ export default function CheckoutModal({
                   </td>
 
                   <td style={{ textAlign: "right", verticalAlign: "top", paddingTop: 6, paddingBottom: 6 }}>
-                    ${itemPrice.toFixed(2)}
+                    ₡{itemPrice.toFixed(2)}
                   </td>
 
                   <td style={{ textAlign: "right", verticalAlign: "top", paddingTop: 6, paddingBottom: 6, fontWeight: 600 }}>
-                    ${(itemPrice * item.quantity).toFixed(2)}
+                    ₡{(itemPrice * item.quantity).toFixed(2)}
                   </td>
                 </tr>
               );
@@ -181,24 +181,24 @@ export default function CheckoutModal({
         <div className="print-small" style={{ marginTop: 6 }}>
           <div style={{ display: "flex", justifyContent: "space-between" }}>
             <span>Subtotal:</span>
-            <span>${subtotal.toFixed(2)}</span>
+            <span>₡{subtotal.toFixed(2)}</span>
           </div>
 
           {serviceFee > 0 && (
             <div style={{ display: "flex", justifyContent: "space-between" }}>
               <span>Service Fee (10%):</span>
-              <span>${serviceFee.toFixed(2)}</span>
+              <span>₡{serviceFee.toFixed(2)}</span>
             </div>
           )}
 
-          <div style={{ display: "flex", justifyContent: "space-between" }}>
+          {/* <div style={{ display: "flex", justifyContent: "space-between" }}>
             <span>Tax (13%):</span>
-            <span>${tax.toFixed(2)}</span>
-          </div>
+            <span>₡{tax.toFixed(2)}</span>
+          </div> */}
 
           <div style={{ display: "flex", justifyContent: "space-between", marginTop: 6, fontWeight: 700, fontSize: "14px" }}>
             <span>Total:</span>
-            <span>${localTotal.toFixed(2)}</span>
+            <span>₡{localTotal.toFixed(2)}</span>
           </div>
         </div>
 
@@ -211,12 +211,12 @@ export default function CheckoutModal({
           </div>
           <div style={{ display: "flex", justifyContent: "space-between" }}>
             <span>Amount Paid:</span>
-            <span>${amountPaidNum.toFixed(2)}</span>
+            <span>₡{amountPaidNum.toFixed(2)}</span>
           </div>
           {change > 0 && (
             <div style={{ display: "flex", justifyContent: "space-between", fontWeight: 600 }}>
               <span>Change:</span>
-              <span>${change.toFixed(2)}</span>
+              <span>₡{change.toFixed(2)}</span>
             </div>
           )}
         </div>
@@ -259,7 +259,7 @@ export default function CheckoutModal({
                         <div className="text-xs text-gray-400">{item.categoryName}</div>
                       )}
                       <div className="text-xs text-gray-500">
-                        ${itemPrice.toFixed(2)} × {item.quantity}
+                        ₡{itemPrice.toFixed(2)} × {item.quantity}
                       </div>
                       {/* Display modifiers */}
                       {item.notes && item.notes !== '{}' && (
@@ -299,7 +299,7 @@ export default function CheckoutModal({
                       )}
                     </div>
                     <div className="font-semibold ml-4">
-                      ${(itemPrice * item.quantity).toFixed(2)}
+                      ₡{(itemPrice * item.quantity).toFixed(2)}
                     </div>
                   </div>
                 );
@@ -312,22 +312,22 @@ export default function CheckoutModal({
             <div className="space-y-2 text-sm mb-3">
               <div className="flex justify-between">
                 <span className="text-gray-600">Subtotal:</span>
-                <span className="font-medium">${subtotal.toFixed(2)}</span>
+                <span className="font-medium">₡{subtotal.toFixed(2)}</span>
               </div>
               {serviceFee > 0 && (
                 <div className="flex justify-between">
                   <span className="text-gray-600">Service Fee (10%):</span>
-                  <span className="font-medium">${serviceFee.toFixed(2)}</span>
+                  <span className="font-medium">₡{serviceFee.toFixed(2)}</span>
                 </div>
               )}
-              <div className="flex justify-between">
+              {/* <div className="flex justify-between">
                 <span className="text-gray-600">Tax (13%):</span>
-                <span className="font-medium">${tax.toFixed(2)}</span>
-              </div>
+                <span className="font-medium">₡{tax.toFixed(2)}</span>
+              </div> */}
             </div>
             <div className="border-t pt-3 flex justify-between items-center">
               <span className="text-sm text-gray-600">Total Amount</span>
-              <span className="text-3xl font-bold text-[#ff8f2e]">${localTotal.toFixed(2)}</span>
+              <span className="text-3xl font-bold text-[#ff8f2e]">₡{localTotal.toFixed(2)}</span>
             </div>
           </div>
 
@@ -354,7 +354,7 @@ export default function CheckoutModal({
           <div className="mb-6">
             <label className="block text-sm font-medium text-gray-700 mb-2">Amount Paid</label>
             <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">₡</span>
               <input
                 type="number"
                 step="0.01"
@@ -366,7 +366,7 @@ export default function CheckoutModal({
             </div>
             {amountPaidNum <= localTotal && (
               <p className="text-red-500 text-xs mt-1">
-                Amount paid must be at least ${localTotal.toFixed(2)}
+                Amount paid must be at least ₡{localTotal.toFixed(2)}
               </p>
             )}
           </div>
@@ -376,7 +376,7 @@ export default function CheckoutModal({
             <div className="bg-green-50 border border-green-200 p-3 rounded-lg mb-6">
               <div className="flex justify-between items-center">
                 <span className="text-sm font-medium text-green-800">Change</span>
-                <span className="text-lg font-bold text-green-600">${change.toFixed(2)}</span>
+                <span className="text-lg font-bold text-green-600">₡{change.toFixed(2)}</span>
               </div>
             </div>
           )}

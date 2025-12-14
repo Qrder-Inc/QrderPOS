@@ -69,8 +69,13 @@ export default function ModifierModal({
             // Deselect
             onModifierChange(groupId, modifierId);
         } else {
-            // Select (if under max)
-            if (currentSelections.length < maxSelections) {
+            // For radio buttons (max_selections = 1), replace the current selection
+            if (maxSelections === 1 && currentSelections.length > 0) {
+                // First deselect the current selection
+                onModifierChange(groupId, currentSelections[0]);
+            }
+            // Select the new option (if under max or replacing for radio)
+            if (currentSelections.length < maxSelections || maxSelections === 1) {
                 onModifierChange(groupId, modifierId);
             }
         }
@@ -100,7 +105,7 @@ export default function ModifierModal({
                 <div className="mb-6">
                     <h2 className="text-xl font-semibold mb-2">{item.name}</h2>
                     <p className="text-gray-600 text-sm mb-2">{item.description}</p>
-                    <p className="text-lg font-semibold text-[#ff8f2e]">${item.price.toFixed(2)}</p>
+                    <p className="text-lg font-semibold text-[#ff8f2e]">₡{item.price.toFixed(2)}</p>
                 </div>
 
                 {/* Modifier Groups */}
@@ -144,7 +149,8 @@ export default function ModifierModal({
                                         <div className="space-y-2">
                                             {group.modifiers.map((modifier) => {
                                                 const isSelected = (selectedModifiers[group.id] || []).includes(modifier.id);
-                                                const isMaxReached = selectedCount >= group.max_selections && !isSelected;
+                                                // For radio buttons (single selection), don't disable other options
+                                                const isMaxReached = !isSingleSelection && selectedCount >= group.max_selections && !isSelected;
                                                 
                                                 return (
                                                     <label
@@ -173,7 +179,7 @@ export default function ModifierModal({
                                                                 modifier.price_adjustment > 0 ? 'text-[#ff8f2e]' : 'text-green-600'
                                                             }`}>
                                                                 {modifier.price_adjustment > 0 ? '+' : ''}
-                                                                ${Math.abs(modifier.price_adjustment).toFixed(2)}
+                                                                ₡{Math.abs(modifier.price_adjustment).toFixed(2)}
                                                             </span>
                                                         )}
                                                     </label>
@@ -206,7 +212,7 @@ export default function ModifierModal({
                     <div className="flex items-center justify-between">
                         <span className="text-sm text-gray-600">Total Price</span>
                         <span className="text-xl font-bold text-[#ff8f2e]">
-                            ${calculateTotalPrice().toFixed(2)}
+                            ₡{calculateTotalPrice().toFixed(2)}
                         </span>
                     </div>
                 </div>

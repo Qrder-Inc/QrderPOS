@@ -69,7 +69,8 @@ export default {
             newOrder: "New Order",
             orders: "Orders",
             settings: "Settings",
-            logout: "Logout"
+            logout: "Logout",
+            home: "Home"
         }
     },
     dashboard : {

@@ -193,7 +193,7 @@ export default function MenuPage() {
                                                                 >
                                                                     <span className="text-sm">{item.name}</span>
                                                                     <span className="text-sm font-medium">
-                                                                        ${item.price.toFixed(2)}
+                                                                        ₡{item.price.toFixed(2)}
                                                                     </span>
                                                                 </div>
                                                             ))}

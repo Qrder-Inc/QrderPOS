@@ -46,7 +46,7 @@ export default function OrderSidebar({
 
   const serviceFee = orderType === OrderType.DINE_IN ? subtotal * 0.10 : 0; // 10% service fee for dine-in
   const tax = subtotal * 0.13; // 13% tax
-  const total = subtotal + serviceFee + tax;
+  const total = subtotal + serviceFee; // Tax calculation temporarily disabled
 
   // Helper function to parse and display modifiers
   const renderModifiers = (item: OrderItem) => {
@@ -69,7 +69,7 @@ export default function OrderSidebar({
                 const modifier = group.modifiers!.find(m => m.id === modifierId);
                 if (modifier) {
                   const priceText = modifier.price_adjustment !== 0 
-                    ? ` (+$${modifier.price_adjustment.toFixed(2)})`
+                    ? ` (+₡${modifier.price_adjustment.toFixed(2)})`
                     : '';
                   return `${modifier.name}${priceText}`;
                 }
@@ -230,7 +230,7 @@ export default function OrderSidebar({
                   <div className="flex justify-between items-start mb-2">
                     <div className="flex-1">
                       <h3 className="font-medium text-sm">{item.name}</h3>
-                      <p className="text-xs text-gray-500">${itemPrice.toFixed(2)} each</p>
+                      <p className="text-xs text-gray-500">₡{itemPrice.toFixed(2)} each</p>
                       {/* Display Modifiers and Notes */}
                       {renderModifiers(item)}
                     </div>
@@ -260,7 +260,7 @@ export default function OrderSidebar({
                       </button>
                     </div>
                     <span className="text-sm font-semibold">
-                      ${(itemPrice * item.quantity).toFixed(2)}
+                      ₡{(itemPrice * item.quantity).toFixed(2)}
                     </span>
                   </div>
                 </div>
@@ -277,21 +277,21 @@ export default function OrderSidebar({
           <div className="space-y-2">
             <div className="flex justify-between items-center text-sm">
               <span className="text-gray-600">{t("subtotal")}</span>
-              <span className="font-medium">${subtotal.toFixed(2)}</span>
+              <span className="font-medium">₡{subtotal.toFixed(2)}</span>
             </div>
             {orderType === OrderType.DINE_IN && (
               <div className="flex justify-between items-center text-sm">
                 <span className="text-gray-600">{t("service")} (10%)</span>
-                <span className="font-medium">${serviceFee.toFixed(2)}</span>
+                <span className="font-medium">₡{serviceFee.toFixed(2)}</span>
               </div>
             )}
-            <div className="flex justify-between items-center text-sm">
+            {/* <div className="flex justify-between items-center text-sm">
               <span className="text-gray-600">{t("tax")} (13%)</span>
-              <span className="font-medium">${tax.toFixed(2)}</span>
-            </div>
+              <span className="font-medium">₡{tax.toFixed(2)}</span>
+            </div> */}
             <div className="flex justify-between items-center text-lg font-semibold pt-2 border-t">
               <span>{t("total")}</span>
-              <span>${total.toFixed(2)}</span>
+              <span>₡{total.toFixed(2)}</span>
             </div>
           </div>
 
@@ -301,7 +301,7 @@ export default function OrderSidebar({
               onClick={onCheckout}
               className="w-full bg-[#ff8f2e] hover:bg-[#e67e1a]"
             >
-              {t("checkout")} - ${total.toFixed(2)}
+              {t("checkout")} - ₡{total.toFixed(2)}
             </Button>
             <Button 
               variant="outline"

@@ -88,7 +88,7 @@ export default function MenuItemsPage() {
                                     </div>
                                     <div className="flex items-center gap-3">
                                         <span className="font-semibold text-lg">
-                                            ${item.price.toFixed(2)}
+                                            ₡{item.price.toFixed(2)}
                                         </span>
                                         <DropdownMenu>
                                             <DropdownMenuTrigger asChild>

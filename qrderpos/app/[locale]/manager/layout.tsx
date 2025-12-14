@@ -1,11 +1,22 @@
+import { getUserMembership } from "@/dal/user";
 import { Sidebar } from "./sidebar"
 import { Navbar } from "@/components/navbar"  
+import { redirect } from "next/navigation";
+import { AUTH_ROUTES } from "@/config/routes";
+import { Role } from "@/types/role";
 
-export default function DashboardLayout({
+export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+
+  const role = await getUserMembership();
+
+  if (role.role !== Role.OWNER) {
+    redirect(AUTH_ROUTES.UNAUTHORIZED);
+  }
+
   return (
     <>
     <Navbar/>

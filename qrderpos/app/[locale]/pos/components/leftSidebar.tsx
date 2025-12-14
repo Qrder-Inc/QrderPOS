@@ -4,9 +4,10 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import {Settings, ShoppingBag, Plus, LogOut} from 'lucide-react';
+import {Settings, ShoppingBag, Plus, LogOut, Home} from 'lucide-react';
 import { useRouter } from '@/i18n/navigation';
 import { useTranslations } from 'next-intl';
+import { useAuth } from '@/context/AuthProvider';
 
 interface NavItem {
   icon: React.ComponentType<{ className?: string }>;
@@ -18,6 +19,7 @@ interface NavItem {
 export default function NavSideBar() {
   const t = useTranslations('pos.navSidebar');
   const router = useRouter();
+  const { signOut } = useAuth();
 
   const navItems: NavItem[] = [
     { icon: Plus, label: t('newOrder') },
@@ -27,6 +29,7 @@ export default function NavSideBar() {
 
   const handleLogout = () => {
     // Add your logout logic here (e.g., clear session, redirect to login)
+    signOut();
     router.push('/');
   };
 
@@ -50,14 +53,28 @@ export default function NavSideBar() {
         </div>
 
         {/* Logout button at the bottom */}
-        <div className="mt-auto">
+        <div className="mt-auto flex flex-col gap-4">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button 
+                onClick={() => router.push('/')}
+                className="w-12 h-12 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors"
+                    >
+                <Home className="w-6 h-6 text-gray-700" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="right">
+              <p>{t('home')}</p>
+            </TooltipContent>
+          </Tooltip>
+          
           <Tooltip>
             <TooltipTrigger asChild>
               <button 
                 onClick={handleLogout}
                 className="w-12 h-12 flex items-center justify-center rounded-lg hover:bg-red-50 transition-colors"
               >
-                <LogOut className="w-6 h-6 text-red-600" />
+          <LogOut className="w-6 h-6 text-red-600" />
               </button>
             </TooltipTrigger>
             <TooltipContent side="right">

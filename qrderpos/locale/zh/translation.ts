@@ -1,5 +1,3 @@
-import { clear } from "console";
-
 export default {
     common : {
         welcome: "欢迎使用 QrderPOS",
@@ -71,7 +69,8 @@ export default {
             newOrder: "新订单",
             orders: "订单",
             settings: "设置",
-            logout: "登出"
+            logout: "登出",
+            home: "主页"
         }
     },
     dashboard : {

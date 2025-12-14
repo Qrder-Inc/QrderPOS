@@ -23,7 +23,7 @@ export default function ProductCard({
     </div>
     <h3 className="font-semibold text-sm mb-1">{title}</h3>
     <p className="text-xs text-gray-500 mb-2">{category}</p>
-    <p className="text-lg font-bold text-[#ff8f2e]">${price.toFixed(2)}</p>
+    <p className="text-lg font-bold text-[#ff8f2e]">₡{price.toFixed(2)}</p>
     </>
   );
 }

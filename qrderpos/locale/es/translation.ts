@@ -78,7 +78,8 @@ export default {
       newOrder: "Nuevo Pedido",
       orders: "Pedidos",
       settings: "Configuración",
-      logout: "Cerrar Sesión"
+      logout: "Cerrar Sesión",
+      home: "Inicio"
     }
   },
   dashboard: {

@@ -391,7 +391,7 @@ export default function POS({ restaurantData }: POSClientProps) {
                     }, 0);
                     const serviceFee = orderType === OrderType.DINE_IN ? subtotal * 0.10 : 0;
                     const tax = subtotal * 0.13;
-                    return subtotal + serviceFee + tax;
+                    return subtotal + serviceFee; // Tax calculation temporarily disabled
                 })()}
                 subtotal={orderItems.reduce((sum, item) => {
                     const price = item.customPrice ?? item.price;
